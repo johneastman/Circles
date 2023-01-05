@@ -33,14 +33,12 @@ class Circle {
         this.startTime = getCurrentTime() - this.collisionColorTimeActive;
     }
     
-    // Check for collision between objects and handle resulting
-    // velocities.
-    //
-    // Collision logic source:
-    // https://github.com/adiman9/pureJSCollisions/blob/master/index.js
-    // 
-    // Accompanying Tutorial: 
-    // https://www.youtube.com/watch?v=XD-7anXSOp0
+    /*
+    Check for collision between objects and handle resulting velocities.
+
+    Collision logic source: https://github.com/adiman9/pureJSCollisions/blob/master/index.js
+    Accompanying Tutorial: https://www.youtube.com/watch?v=XD-7anXSOp0
+    */
     checkCollision(other: Circle): boolean {
         if (this !== other) { // Do not check collision with self.
             const v: Vector = Vector.sub(this.pos, other.pos);
@@ -127,6 +125,8 @@ class Circle {
         context.beginPath();
         context.arc(this.pos.x, this.pos.y, this.radius, 0, 2 * Math.PI);
         context.lineWidth = 1;
+
+        // Change the color for a few moments after a circle collides with a wall or another circle.
         if (getCurrentTime() - this.startTime >= this.collisionColorTimeActive) {
             context.fillStyle = this.defaultColor;
         } else {

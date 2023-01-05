@@ -1,6 +1,8 @@
 var score: number = 0;
 var circles: Circle[] = new Array();
 
+const numCircles: number = 7;
+
 let colors: Color[] = new Array(
     new Color(244, 66, 66),
     new Color(244, 160, 65),
@@ -14,6 +16,9 @@ let colors: Color[] = new Array(
 // Lower and upper bounds for circle sizes
 const radiusLower: number = 10;
 const radiusHigher: number = 30;
+
+const scoreBoard: HTMLElement = document.getElementById("scoreBoard");
+scoreBoard.innerHTML = `Score: ${score}`;
 
 // Always point the turret toward the mouse
 const canvas: HTMLCanvasElement = document.getElementById("canvas") as HTMLCanvasElement;
@@ -32,22 +37,24 @@ canvas.addEventListener("click", function(e: MouseEvent): void {
     circles.push(bullet);
 });
 
+// Reset Game Button
+const resetButton: HTMLButtonElement = document.getElementById("reset_game") as HTMLButtonElement;
+resetButton.onclick = function(e: MouseEvent) {
+
+    // Ensure there are no circles remaining
+    circles = []
+    score = 0;
+
+    startGame();
+};
+
 const context: CanvasRenderingContext2D = canvas.getContext("2d");
 
 /* 
 The turret needs to be defined after the canvas is initiated/setup because the turret
-uses the candvas width and height for its own setup.
+uses the canvas width and height for its own setup.
 */
 const turret: Turret = new Turret(canvas.width, canvas.height);
-
-const scoreBoard: HTMLElement = document.getElementById("scoreBoard");
-scoreBoard.innerHTML = `Score: ${score}`;
-
-function createCircles(): void {
-    for (let i = 0; i < 7; i++) {
-        createCircle();
-    }
-}
 
 function createCircle(): void {
     let c = new CircleRandom(radiusLower, radiusHigher, colors);
@@ -63,7 +70,16 @@ function addCirclesAtInterval(interval: number = 1000): void {
     }, interval);
 }
 
-createCircles();
+function startGame(): void {
+
+    // Add circles to the game
+    for (let i = 0; i < numCircles; i++) {
+        createCircle();
+    }
+
+    // Display the player's score
+    scoreBoard.innerHTML = `Score: ${score}`;
+}
 
 function mainLoop() {
     context.clearRect(0, 0, canvas.width, canvas.height);
@@ -82,4 +98,7 @@ function mainLoop() {
     
     requestAnimationFrame(mainLoop);
 }
+
+// Main logic starts here
+startGame()
 requestAnimationFrame(mainLoop);
