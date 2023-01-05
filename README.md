@@ -7,4 +7,4 @@
 1. Select `tsc: build`
 
 ### Command line
-In the root directory of this project, run `tsc src/* --outDir js`
+In the root directory of this project, run `tsc -p tsconfig.json`.

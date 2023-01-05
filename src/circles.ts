@@ -1,43 +1,31 @@
-let colors = new Array({r: 244, g: 66,  b: 66},  {r: 244, g: 160, b: 65},
-                       {r: 244, g: 229, b: 65},  {r: 67,  g: 244, b: 65},
-                       {r: 65,  g: 163, b: 244}, {r: 145, g: 65,  b: 244},
-                       {r: 244, g: 65,  b: 205});
-                       
 class Circle {
+    defaultColor: string;
+    collisionColor: string;
+    radius: number;
+    pos: Vector;
+    vel: Vector;
+    acc: Vector;
+    collisionColorTimeActive: number;
+    startTime: number;
 
-    defaultColor: string
-    collisionColor: string
-    radius: number
-    pos: Vector
-    vel: Vector
-    acc: Vector
-    collisionColorTimeActive: number
-    startTime: number
+    colorOffset: number = 40;
 
-    constructor(x: number, y: number, radius: number, color, velocity) {
-        let colorOffset = 40;
-        
+    constructor(x: number, y: number, radius: number, color: Color, velocity: Vector = undefined) {
         // When objects collide, the color should change to a lighter
         // version of the given color. The amount lighter is specified
         // by 'colorOffset'
-        this.defaultColor = `rgb(${color.r}, ${color.g}, ${color.b})`;
-        this.collisionColor = `rgb(${color.r + colorOffset}, ${color.g + colorOffset}, ${color.b + colorOffset})`;
+        this.defaultColor = color.rgbString();
+        this.collisionColor = color.rgbString(this.colorOffset)
         
         this.radius = radius;
         this.pos = new Vector(x, y);
-        
+
         // Velocity is an optional parameter
-        if (velocity === undefined) {
-            this.vel = new Vector(
-                sign() * (1 / radius) * 10,
-                sign() * (1 / radius) * 10
-            );
-        } else {
-            this.vel = velocity;
-        }
+        this.vel = velocity === undefined ? new Vector(sign() * (1 / radius) * 10, sign() * (1 / radius) * 10) : velocity
         
         this.acc = new Vector(0, 0);
 
+        // After two objects collide, this determines how long the object's color is changed for
         this.collisionColorTimeActive = 0.15;
         
         // Subtracting the collision time ensures that the collision
@@ -55,37 +43,37 @@ class Circle {
     // https://www.youtube.com/watch?v=XD-7anXSOp0
     checkCollision(other: Circle): boolean {
         if (this !== other) { // Do not check collision with self.
-            const v = Vector.sub(this.pos, other.pos);
-            const distance = v.magnitude();
+            const v: Vector = Vector.sub(this.pos, other.pos);
+            const distance: number = v.magnitude();
             
             if (distance <= this.radius + other.radius) {
                 
                 this.startTime = getCurrentTime();
                 other.startTime = getCurrentTime();
                 
-                const unitNormal = Vector.div(v, distance);
-                const unitTan = unitNormal.tan();
+                const unitNormal: Vector = Vector.div(v, distance);
+                const unitTan: Vector = unitNormal.tan();
                 
                 // Ensure that collided objects do not get stuck in 
                 // each other.
-                const correction = Vector.mul(unitNormal, this.radius + other.radius);
+                const correction: Vector = Vector.mul(unitNormal, this.radius + other.radius);
                 this.pos = Vector.add(other.pos, correction);
                 
-                const thisNormal = this.vel.dot(unitNormal);
-                const otherNormal = other.vel.dot(unitNormal);
+                const thisNormal: number = this.vel.dot(unitNormal);
+                const otherNormal: number = other.vel.dot(unitNormal);
 
-                const thisTan = this.vel.dot(unitTan);
-                const otherTan = other.vel.dot(unitTan);
+                const thisTan: number = this.vel.dot(unitTan);
+                const otherTan: number = other.vel.dot(unitTan);
                 
-                const thisScalarVelocity = (thisNormal * (this.radius - other.radius) + 
+                const thisScalarVelocity: number = (thisNormal * (this.radius - other.radius) + 
                     2 * other.radius * otherNormal) / (this.radius + other.radius);
-                const otherScalarVelocity = (otherNormal * (other.radius - this.radius) + 
+                const otherScalarVelocity: number = (otherNormal * (other.radius - this.radius) + 
                     2 * this.radius * thisNormal) / (this.radius + other.radius);
                 
-                const thisFinalNormal = Vector.mul(unitNormal, thisScalarVelocity);
-                const otherFinalNormal = Vector.mul(unitNormal, otherScalarVelocity);
-                const thisFinalTan = Vector.mul(unitTan, thisTan);
-                const otherFinalTan = Vector.mul(unitTan, otherTan);
+                const thisFinalNormal: Vector = Vector.mul(unitNormal, thisScalarVelocity);
+                const otherFinalNormal: Vector = Vector.mul(unitNormal, otherScalarVelocity);
+                const thisFinalTan: Vector = Vector.mul(unitTan, thisTan);
+                const otherFinalTan: Vector = Vector.mul(unitTan, otherTan);
                 
                 // Update velocities with final velocity.
                 this.vel = Vector.add(thisFinalNormal, thisFinalTan);
@@ -103,7 +91,7 @@ class Circle {
     // of the canvas or pushed through by other objects.
     // 
     // Multiplying velocity components by -1 changes the direction.
-    checkEdges() {
+    checkEdges(): void {
         
         // Right side of canvas
         if (this.pos.x + this.radius >= canvas.width) {
@@ -135,7 +123,7 @@ class Circle {
     }
     
     // Draw the circle on the canvas
-    draw() {
+    draw(): void {
         context.beginPath();
         context.arc(this.pos.x, this.pos.y, this.radius, 0, 2 * Math.PI);
         context.lineWidth = 1;
@@ -151,13 +139,13 @@ class Circle {
     }
     
     // Remove a circle object from the array of circles.
-    remove() {
-        let index = circles.indexOf(this);
+    remove(): void {
+        let index: number = circles.indexOf(this);
         circles.splice(index, 1);
     }
     
     // Update the position, velocity, and acceleration of the circle.
-    update() {
+    update(): void {
         this.pos = Vector.add(this.pos, this.vel);
         this.vel = Vector.add(this.vel, this.acc);
         this.acc = Vector.mul(this.acc, 0);
@@ -167,45 +155,51 @@ class Circle {
 
 // Create a circle with random parameters.
 class CircleRandom extends Circle {
-    constructor(rLow, rHigh) {
-        let radius = getRandomFloat(rLow, rHigh);
+
+    constructor(radiusLowerBound: number, radiusUpperBound: number, colors: Color[]) {
+        let radius = getRandomFloat(radiusLowerBound, radiusUpperBound);
         
         // Ensure that circle never leaves bounds of canvas.
-        let x = getRandomFloat(radius, canvas.width - radius);
-        let y = getRandomFloat(radius, canvas.height - radius);
-        let color = colors[getRandomInteger(0, colors.length)];
-        super(x, y, radius, color, undefined);
+        let x: number = getRandomFloat(radius, canvas.width - radius);
+        let y: number = getRandomFloat(radius, canvas.height - radius);
+        let color: Color = colors[getRandomInteger(0, colors.length)];
+        super(x, y, radius, color);
     }
 }
 
 
 // Bullet object
 class Bullet extends Circle {
-    constructor(v1, v2) {
+    constructor(startPos: Vector, endPos: Vector) {
         // Calculate the velocity of the bullet
         // Projectile velocity source (Answer by SpartanDonut):
         // https://gamedev.stackexchange.com/questions/50978/moving-a-sprite-towards-an-x-and-y-coordinate
-        let v3 = Vector.sub(v2, v1);
-        let length = v3.magnitude();
-        let unit = Vector.div(v3, length);
-        let speed = 5;
-        let vel = Vector.mul(unit, speed);
-        super(v2.x, v2.y, 5, {r: 244, g: 229, b: 65}, vel);    
+        let v3: Vector = Vector.sub(endPos, startPos);
+        let length: number = v3.magnitude();
+        let unit: Vector = Vector.div(v3, length);
+        let speed: number = 5;
+        let vel: Vector = Vector.mul(unit, speed);
+        super(
+            endPos.x,
+            endPos.y,
+            5,
+            new Color(244, 229, 65),
+            vel
+        );    
     }
 
-    // If a bullet collides with another object, both objects are
-    // removed.
+    // If a bullet collides with another object, both objects are removed.
     checkCollision(other: Circle): boolean {
         if (super.checkCollision(other)) {
             other.remove();
-            score += 1;
+            score += 1; // "score declared in main.ts"
             scoreBoard.innerHTML = `Score: ${score}`;
             return true
         }
         return false
     }
 
-    checkEdges() {
+    checkEdges(): void {
         // Remove bullets when off the bounds of the canvas.
         if (this.pos.x < 0 || this.pos.x > canvas.width ||
             this.pos.y < 0 || this.pos.y > canvas.width) {

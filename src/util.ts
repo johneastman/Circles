@@ -1,6 +1,7 @@
 // Return time since epoch in seconds.
-function getCurrentTime() {
-    return (new Date()).getTime() / 1000;
+function getCurrentTime(): number {
+    let date: Date = new Date();
+    return date.getTime() / 1000;
 }
 
 // Return a random floating-point number within a specified range.

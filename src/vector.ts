@@ -11,55 +11,58 @@ class Vector {
         this.y = y;
     }
     
-    static add(v1: Vector, v2: Vector): Vector {
-        return new Vector(v1.x + v2.x, v1.y + v2.y);
+    // Add two vectors together
+    static add(first: Vector, second: Vector): Vector {
+        return new Vector(first.x + second.x, first.y + second.y);
     }
     
-    static sub(v1: Vector, v2: Vector): Vector {
-        return new Vector(v1.x - v2.x, v1.y - v2.y);
+    // Subtract two vectors
+    static sub(first: Vector, second: Vector): Vector {
+        return new Vector(first.x - second.x, first.y - second.y);
     }
     
-    static mul(v: Vector, s: number) {
-        // Multiplies a vector (v) by a scalar (s)
-        return new Vector(v.x * s, v.y * s);
+    // Multiply a vector by a scalar value
+    static mul(vector: Vector, scalar: number): Vector {
+        return new Vector(vector.x * scalar, vector.y * scalar);
     }
     
-    static div(v: Vector, s: number): Vector {
-        // Divides a vector (v) by a scalar (s)
-        return new Vector(v.x / s, v.y / s);
+    // Divide a vector by a scalar value
+    static div(vector: Vector, scalar: number): Vector {
+        return new Vector(vector.x / scalar, vector.y / scalar);
     }
     
-    // Given two vectors and a length, return a new vector 'length'
-    // units from 'v1'. 'v2' is used to calculate the slope of the
-    // line between 'v1' and 'v2'.
-    // Equations source (Answer by John):
-    // https://math.stackexchange.com/questions/2045174/how-to-find-a-point-between-two-points-with-given-distance
-    static distanceFrom(v1, v2, length) {
-        let distance = v1.distance(v2);
-        let x = v1.x + (length / distance) * (v2.x - v1.x);
-        let y = v1.y + (length / distance) * (v2.y - v1.y);
+    /*
+    Given two vectors and a length, return a new vector 'length' units from 'first'. 'second' is used to
+    calculate the slope of the line between 'first' and 'second'.
+    
+    Equations source: https://math.stackexchange.com/a/2045181
+    */
+    static distanceFrom(first: Vector, second: Vector, length: number): Vector {
+        let distance: number = first.distance(second);
+        let x: number = first.x + (length / distance) * (second.x - first.x);
+        let y: number = first.y + (length / distance) * (second.y - first.y);
         return new Vector(x, y);
     }
     
-    distance(v) {
-        return Math.sqrt((v.x - this.x) ** 2 + (v.y - this.y) ** 2)
+    distance(other: Vector): number {
+        return Math.sqrt((other.x - this.x) ** 2 + (other.y - this.y) ** 2)
     }
-    
-    dot(v) {
-        // Returns the dot product of two vectors
-        return this.x * v.x + this.y * v.y;
+
+    // Returns the dot product of two vectors
+    dot(other: Vector): number {
+        return this.x * other.x + this.y * other.y;
     }
-    
-    magnitude() {
+
+    magnitude(): number {
         return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
     }
     
-    tan() {
-        // Tangent vector
+    // Tangent vector
+    tan(): Vector {
         return new Vector(-this.y, this.x);
     }
     
-    toString() {
+    toString(): string {
         return `(${this.x}, ${this.y})`;
     }
 }

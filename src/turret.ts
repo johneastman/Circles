@@ -1,21 +1,23 @@
 class Turret {
 
-    radius: number
-    turretLength: number
-    turretStart: Vector
-    turretEnd: Vector
+    radius: number = 20;
+    turretLength: number = 50;
+    turretStart: Vector;
+    turretEnd: Vector;
+    canvasWidth: number
+    canvasHeight: number
     
-    constructor() {
-        this.radius = 20;
-        this.turretLength = 50;
+    constructor(canvasWidth: number, canvasHeight: number) {
+        this.canvasWidth = canvasWidth
+        this.canvasHeight = canvasHeight
         
-        this.turretStart = new Vector(canvas.width / 2, canvas.height);
-        this.turretEnd = new Vector(canvas.width / 2, canvas.height - this.turretLength);
+        this.turretStart = new Vector(this.canvasWidth / 2, this.canvasHeight);
+        this.turretEnd = new Vector(this.canvasWidth / 2, this.canvasHeight - this.turretLength);
     }
     
     draw() {
         context.beginPath();
-        context.arc(canvas.width / 2, canvas.height, this.radius, 0, Math.PI, true);
+        context.arc(this.canvasWidth / 2, this.canvasHeight, this.radius, 0, Math.PI, true);
         context.lineWidth = 1;
         context.fillStyle = "black";
         context.fill();
@@ -23,14 +25,14 @@ class Turret {
         
         // Turret cannon (the part that follows the mouse)
         context.beginPath();
-        context.moveTo(canvas.width / 2, canvas.height);
+        context.moveTo(this.canvasWidth / 2, this.canvasHeight);
         context.lineTo(this.turretEnd.x, this.turretEnd.y);
         context.lineWidth = 5;
         context.stroke();
     }
     
     // Update where the turret is pointing based on the mouse position.
-    update(v2) {
-        this.turretEnd = Vector.distanceFrom(this.turretStart, v2, this.turretLength)
+    update(mousePosVector: Vector): void {
+        this.turretEnd = Vector.distanceFrom(this.turretStart, mousePosVector, this.turretLength)
     }
 }

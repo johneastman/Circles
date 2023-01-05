@@ -1,49 +1,68 @@
-const canvas = <HTMLCanvasElement> document.getElementById("canvas");
-canvas.addEventListener("mousemove", function(e) {
-    let rect = canvas.getBoundingClientRect();
-    let mouseVector = new Vector(e.clientX - rect.left, e.clientY - rect.top);
+var score: number = 0;
+var circles: Circle[] = new Array();
+
+let colors: Color[] = new Array(
+    new Color(244, 66, 66),
+    new Color(244, 160, 65),
+    new Color(244, 229, 65),
+    new Color(67, 244, 65),
+    new Color(65, 163, 244),
+    new Color(145, 65, 244),
+    new Color(244, 65, 205),
+);
+
+// Lower and upper bounds for circle sizes
+const radiusLower: number = 10;
+const radiusHigher: number = 30;
+
+// Always point the turret toward the mouse
+const canvas: HTMLCanvasElement = document.getElementById("canvas") as HTMLCanvasElement;
+canvas.addEventListener("mousemove", function(e: MouseEvent): void {
+    let rect: DOMRect = canvas.getBoundingClientRect();
+    let mouseVector: Vector = new Vector(e.clientX - rect.left, e.clientY - rect.top);
     turret.update(mouseVector);
 });
 
-canvas.addEventListener("click", function(e) {
-    let start = new Vector(turret.turretStart.x, turret.turretStart.y);
-    let end = new Vector(turret.turretEnd.x, turret.turretEnd.y);
-        
-    // Calculate velocity of the bullet
-    let speed = 5;
-    let v3 = Vector.sub(end, start);
-    let length = v3.magnitude();
-    let unit = Vector.div(v3, length);
-    let vel = Vector.mul(unit, speed);
-    
-    let bullet = new Bullet(start, end);
-    
-    //let bullet = new Bullet(start, end);
+// Fire a bullet from the turret when the user clicks the canvas
+canvas.addEventListener("click", function(e: MouseEvent): void {
+    let startPos: Vector = new Vector(turret.turretStart.x, turret.turretStart.y);
+    let endPos: Vector = new Vector(turret.turretEnd.x, turret.turretEnd.y);    
+    let bullet = new Bullet(startPos, endPos);
+
     circles.push(bullet);
 });
 
-const context = canvas.getContext("2d");
+const context: CanvasRenderingContext2D = canvas.getContext("2d");
 
-var score = 0;
-const scoreBoard = document.getElementById("scoreBoard");
+/* 
+The turret needs to be defined after the canvas is initiated/setup because the turret
+uses the candvas width and height for its own setup.
+*/
+const turret: Turret = new Turret(canvas.width, canvas.height);
+
+const scoreBoard: HTMLElement = document.getElementById("scoreBoard");
 scoreBoard.innerHTML = `Score: ${score}`;
 
-function createCircles() {
+function createCircles(): void {
     for (let i = 0; i < 7; i++) {
         createCircle();
     }
 }
 
-function createCircle() {
-    let c = new CircleRandom(radiusLower, radiusHigher);
+function createCircle(): void {
+    let c = new CircleRandom(radiusLower, radiusHigher, colors);
     circles.push(c);
 }
 
-const turret = new Turret();
-const radiusLower = 10;
-const radiusHigher = 30;
+function addCirclesAtInterval(interval: number = 1000): void {
+    // Continually add circles at given intervals (note: units for "interval" are milliseconds)
+    setInterval(function() {
+        if (circles.length < 25) {
+            createCircle();
+        }
+    }, interval);
+}
 
-var circles = new Array();
 createCircles();
 
 function mainLoop() {
@@ -64,10 +83,3 @@ function mainLoop() {
     requestAnimationFrame(mainLoop);
 }
 requestAnimationFrame(mainLoop);
-/*
-setInterval(function() {
-    if (circles.length < 25) {
-        createCircle();
-    }
-}, 1000);
-*/
