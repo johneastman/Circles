@@ -82,6 +82,10 @@ class Circle {
         }
         return false;
     }
+
+    isOutsideBounds(): boolean {
+        return this.pos.x < 0 || this.pos.x > canvas.width || this.pos.y < 0 || this.pos.y > canvas.width
+    }
     
     // Update the position of objects on the canvas. Furthermore, 
     // updating the position to the edge of the canvas upon 
@@ -138,12 +142,6 @@ class Circle {
         context.stroke();
     }
     
-    // Remove a circle object from the array of circles.
-    remove(): void {
-        let index: number = circles.indexOf(this);
-        circles.splice(index, 1);
-    }
-    
     // Update the position, velocity, and acceleration of the circle.
     update(): void {
         this.pos = Vector.add(this.pos, this.vel);
@@ -156,13 +154,18 @@ class Circle {
 // Create a circle with random parameters.
 class CircleRandom extends Circle {
 
-    constructor(radiusLowerBound: number, radiusUpperBound: number, colors: Color[]) {
+    constructor(colors: Color[]) {
+        // Lower and upper bounds for circle sizes
+        let radiusLowerBound: number = 10;
+        let radiusUpperBound: number = 30;
+
         let radius = getRandomFloat(radiusLowerBound, radiusUpperBound);
         
         // Ensure that circle never leaves bounds of canvas.
         let x: number = getRandomFloat(radius, canvas.width - radius);
         let y: number = getRandomFloat(radius, canvas.height - radius);
         let color: Color = colors[getRandomInteger(0, colors.length)];
+        
         super(x, y, radius, color);
     }
 }
@@ -188,22 +191,11 @@ class Bullet extends Circle {
         );    
     }
 
-    // If a bullet collides with another object, both objects are removed.
-    checkCollision(other: Circle): boolean {
-        if (super.checkCollision(other)) {
-            other.remove();
-            score += 1; // "score declared in main.ts"
-            scoreBoard.innerHTML = `Score: ${score}`;
-            return true
-        }
-        return false
-    }
-
     checkEdges(): void {
         // Remove bullets when off the bounds of the canvas.
         if (this.pos.x < 0 || this.pos.x > canvas.width ||
             this.pos.y < 0 || this.pos.y > canvas.width) {
-            this.remove();
+            removeCircle(this);
         }
     }
 }

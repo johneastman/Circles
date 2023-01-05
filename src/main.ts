@@ -13,10 +13,6 @@ let colors: Color[] = new Array(
     new Color(244, 65, 205),
 );
 
-// Lower and upper bounds for circle sizes
-const radiusLower: number = 10;
-const radiusHigher: number = 30;
-
 const scoreBoard: HTMLElement = document.getElementById("scoreBoard");
 scoreBoard.innerHTML = `Score: ${score}`;
 
@@ -57,12 +53,28 @@ uses the canvas width and height for its own setup.
 const turret: Turret = new Turret(canvas.width, canvas.height);
 
 function createCircle(): void {
-    let c = new CircleRandom(radiusLower, radiusHigher, colors);
+    let c = new CircleRandom(colors);
     circles.push(c);
 }
 
+function removeCircle(circle: Circle): void {
+    let index: number = circles.indexOf(circle);
+    circles.splice(index, 1);
+}
+
+// Set the player's score
+function setScore(value: number): void {
+    score = value;
+    scoreBoard.innerHTML = `Score: ${score}`;
+}
+
+// Change the player's score by a given value
+function updateScore(value: number): void {
+    setScore(score + value);
+}
+
+// Continually add circles at given intervals (note: units for "interval" are milliseconds)
 function addCirclesAtInterval(interval: number = 1000): void {
-    // Continually add circles at given intervals (note: units for "interval" are milliseconds)
     setInterval(function() {
         if (circles.length < 25) {
             createCircle();
@@ -77,20 +89,27 @@ function startGame(): void {
         createCircle();
     }
 
-    // Display the player's score
-    scoreBoard.innerHTML = `Score: ${score}`;
+    setScore(0)
+}
+
+function checkCollisions(circle: Circle, circles: Circle[]): void {
+    for (let c of circles) {
+        let isCollide: boolean = c.checkCollision(circle);
+        
+        if (isCollide && c instanceof Bullet) {
+            updateScore(1)
+            removeCircle(circle);
+        }
+    }
 }
 
 function mainLoop() {
     context.clearRect(0, 0, canvas.width, canvas.height);
     for (let circle of circles) {
+
         circle.checkEdges();
-        for (let i = 0; i < circles.length; i++) {
-            const current = circles[i];
-            for (let c of circles.slice(i + 1)) {
-                c.checkCollision(current);
-            }
-        }
+        checkCollisions(circle, circles);
+        
         circle.update();
         circle.draw();
     }
@@ -100,5 +119,5 @@ function mainLoop() {
 }
 
 // Main logic starts here
-startGame()
+startGame();
 requestAnimationFrame(mainLoop);
