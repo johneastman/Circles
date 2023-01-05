@@ -1,4 +1,4 @@
-const canvas = document.getElementById("canvas");
+const canvas = <HTMLCanvasElement> document.getElementById("canvas");
 canvas.addEventListener("mousemove", function(e) {
     let rect = canvas.getBoundingClientRect();
     let mouseVector = new Vector(e.clientX - rect.left, e.clientY - rect.top);

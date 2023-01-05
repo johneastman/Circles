@@ -4,7 +4,17 @@ let colors = new Array({r: 244, g: 66,  b: 66},  {r: 244, g: 160, b: 65},
                        {r: 244, g: 65,  b: 205});
                        
 class Circle {
-    constructor(x, y, radius, color, velocity) {
+
+    defaultColor: string
+    collisionColor: string
+    radius: number
+    pos: Vector
+    vel: Vector
+    acc: Vector
+    collisionColorTimeActive: number
+    startTime: number
+
+    constructor(x: number, y: number, radius: number, color, velocity) {
         let colorOffset = 40;
         
         // When objects collide, the color should change to a lighter
@@ -43,7 +53,7 @@ class Circle {
     // 
     // Accompanying Tutorial: 
     // https://www.youtube.com/watch?v=XD-7anXSOp0
-    checkCollision(other) {
+    checkCollision(other: Circle): boolean {
         if (this !== other) { // Do not check collision with self.
             const v = Vector.sub(this.pos, other.pos);
             const distance = v.magnitude();
@@ -164,7 +174,7 @@ class CircleRandom extends Circle {
         let x = getRandomFloat(radius, canvas.width - radius);
         let y = getRandomFloat(radius, canvas.height - radius);
         let color = colors[getRandomInteger(0, colors.length)];
-        super(x, y, radius, color);
+        super(x, y, radius, color, undefined);
     }
 }
 
@@ -185,12 +195,14 @@ class Bullet extends Circle {
 
     // If a bullet collides with another object, both objects are
     // removed.
-    checkCollision(other) {
+    checkCollision(other: Circle): boolean {
         if (super.checkCollision(other)) {
             other.remove();
             score += 1;
             scoreBoard.innerHTML = `Score: ${score}`;
+            return true
         }
+        return false
     }
 
     checkEdges() {

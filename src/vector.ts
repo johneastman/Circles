@@ -2,25 +2,29 @@
 // Based on code found here:
 // https://github.com/adiman9/pureJSCollisions
 class Vector {
-    constructor(x, y) {
+
+    x: number
+    y: number
+
+    constructor(x: number, y: number) {
         this.x = x;
         this.y = y;
     }
     
-    static add(v1, v2) {
+    static add(v1: Vector, v2: Vector): Vector {
         return new Vector(v1.x + v2.x, v1.y + v2.y);
     }
     
-    static sub(v1, v2) {
+    static sub(v1: Vector, v2: Vector): Vector {
         return new Vector(v1.x - v2.x, v1.y - v2.y);
     }
     
-    static mul(v, s) {
+    static mul(v: Vector, s: number) {
         // Multiplies a vector (v) by a scalar (s)
         return new Vector(v.x * s, v.y * s);
     }
     
-    static div(v, s) {
+    static div(v: Vector, s: number): Vector {
         // Divides a vector (v) by a scalar (s)
         return new Vector(v.x / s, v.y / s);
     }

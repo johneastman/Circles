@@ -1,4 +1,10 @@
 class Turret {
+
+    radius: number
+    turretLength: number
+    turretStart: Vector
+    turretEnd: Vector
+    
     constructor() {
         this.radius = 20;
         this.turretLength = 50;
