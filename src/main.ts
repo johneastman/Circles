@@ -88,19 +88,7 @@ function startGame(): void {
     for (let i = 0; i < numCircles; i++) {
         createCircle();
     }
-
-    setScore(0)
-}
-
-function checkCollisions(circle: Circle, circles: Circle[]): void {
-    for (let c of circles) {
-        let isCollide: boolean = c.checkCollision(circle);
-        
-        if (isCollide && c instanceof Bullet) {
-            updateScore(1)
-            removeCircle(circle);
-        }
-    }
+    setScore(0);
 }
 
 function mainLoop() {
@@ -108,7 +96,10 @@ function mainLoop() {
     for (let circle of circles) {
 
         circle.checkEdges();
-        checkCollisions(circle, circles);
+
+        for (let c of circles) {
+            c.checkCollision(circle);
+        }
         
         circle.update();
         circle.draw();

@@ -11,9 +11,10 @@ class Circle {
     colorOffset: number = 40;
 
     constructor(x: number, y: number, radius: number, color: Color, velocity: Vector = undefined) {
-        // When objects collide, the color should change to a lighter
-        // version of the given color. The amount lighter is specified
-        // by 'colorOffset'
+        /*
+        When objects collide, the color should change to a lighter version of the given color. The amount lighter is specified
+        by 'colorOffset'.
+        */
         this.defaultColor = color.rgbString();
         this.collisionColor = color.rgbString(this.colorOffset)
         
@@ -45,54 +46,55 @@ class Circle {
             const distance: number = v.magnitude();
             
             if (distance <= this.radius + other.radius) {
-                
-                this.startTime = getCurrentTime();
-                other.startTime = getCurrentTime();
-                
-                const unitNormal: Vector = Vector.div(v, distance);
-                const unitTan: Vector = unitNormal.tan();
-                
-                // Ensure that collided objects do not get stuck in 
-                // each other.
-                const correction: Vector = Vector.mul(unitNormal, this.radius + other.radius);
-                this.pos = Vector.add(other.pos, correction);
-                
-                const thisNormal: number = this.vel.dot(unitNormal);
-                const otherNormal: number = other.vel.dot(unitNormal);
-
-                const thisTan: number = this.vel.dot(unitTan);
-                const otherTan: number = other.vel.dot(unitTan);
-                
-                const thisScalarVelocity: number = (thisNormal * (this.radius - other.radius) + 
-                    2 * other.radius * otherNormal) / (this.radius + other.radius);
-                const otherScalarVelocity: number = (otherNormal * (other.radius - this.radius) + 
-                    2 * this.radius * thisNormal) / (this.radius + other.radius);
-                
-                const thisFinalNormal: Vector = Vector.mul(unitNormal, thisScalarVelocity);
-                const otherFinalNormal: Vector = Vector.mul(unitNormal, otherScalarVelocity);
-                const thisFinalTan: Vector = Vector.mul(unitTan, thisTan);
-                const otherFinalTan: Vector = Vector.mul(unitTan, otherTan);
-                
-                // Update velocities with final velocity.
-                this.vel = Vector.add(thisFinalNormal, thisFinalTan);
-                other.vel = Vector.add(otherFinalNormal, otherFinalTan);
-                
+                this.collisionUpdate(other, v, distance);    
                 return true;
             }
         }
         return false;
     }
 
-    isOutsideBounds(): boolean {
-        return this.pos.x < 0 || this.pos.x > canvas.width || this.pos.y < 0 || this.pos.y > canvas.width
+    // Update velocities after two circles collide
+    collisionUpdate(other: Circle, diffVec: Vector, distance: number): void {
+        this.startTime = getCurrentTime();
+        other.startTime = getCurrentTime();
+        
+        const unitNormal: Vector = Vector.div(diffVec, distance);
+        const unitTan: Vector = unitNormal.tan();
+        
+        // Ensure that collided objects do not get stuck in 
+        // each other.
+        const correction: Vector = Vector.mul(unitNormal, this.radius + other.radius);
+        this.pos = Vector.add(other.pos, correction);
+        
+        const thisNormal: number = this.vel.dot(unitNormal);
+        const otherNormal: number = other.vel.dot(unitNormal);
+
+        const thisTan: number = this.vel.dot(unitTan);
+        const otherTan: number = other.vel.dot(unitTan);
+        
+        const thisScalarVelocity: number = (thisNormal * (this.radius - other.radius) + 
+            2 * other.radius * otherNormal) / (this.radius + other.radius);
+        const otherScalarVelocity: number = (otherNormal * (other.radius - this.radius) + 
+            2 * this.radius * thisNormal) / (this.radius + other.radius);
+        
+        const thisFinalNormal: Vector = Vector.mul(unitNormal, thisScalarVelocity);
+        const otherFinalNormal: Vector = Vector.mul(unitNormal, otherScalarVelocity);
+        const thisFinalTan: Vector = Vector.mul(unitTan, thisTan);
+        const otherFinalTan: Vector = Vector.mul(unitTan, otherTan);
+        
+        // Update velocities with final velocity.
+        this.vel = Vector.add(thisFinalNormal, thisFinalTan);
+        other.vel = Vector.add(otherFinalNormal, otherFinalTan);
     }
     
-    // Update the position of objects on the canvas. Furthermore, 
-    // updating the position to the edge of the canvas upon 
-    // collision ensures that objects do not get stuck on the edges 
-    // of the canvas or pushed through by other objects.
-    // 
-    // Multiplying velocity components by -1 changes the direction.
+    /*
+    Update the position of objects on the canvas. Furthermore, 
+    updating the position to the edge of the canvas upon 
+    collision ensures that objects do not get stuck on the edges 
+    of the canvas or pushed through by other objects.
+    
+    Multiplying velocity components by -1 changes the direction.
+    */
     checkEdges(): void {
         
         // Right side of canvas
@@ -173,15 +175,25 @@ class CircleRandom extends Circle {
 
 // Bullet object
 class Bullet extends Circle {
+
+    /*
+    Every time a bullet hits a target, increment this value by 1, and increment the player's score
+    by this value. This rewards the player for hitting multiple targets with the same bullet.
+    */
+    scoreMultiplier: number = 0
+
     constructor(startPos: Vector, endPos: Vector) {
-        // Calculate the velocity of the bullet
-        // Projectile velocity source (Answer by SpartanDonut):
-        // https://gamedev.stackexchange.com/questions/50978/moving-a-sprite-towards-an-x-and-y-coordinate
-        let v3: Vector = Vector.sub(endPos, startPos);
-        let length: number = v3.magnitude();
-        let unit: Vector = Vector.div(v3, length);
+        /*
+        Calculate the velocity of the bullet based on where the turret is pointing
+        
+        Projectile velocity source: https://gamedev.stackexchange.com/a/50983
+        */
+        let diffVec: Vector = Vector.sub(endPos, startPos);
+        let length: number = diffVec.magnitude();
+        let unit: Vector = Vector.div(diffVec, length);
         let speed: number = 5;
         let vel: Vector = Vector.mul(unit, speed);
+
         super(
             endPos.x,
             endPos.y,
@@ -193,9 +205,21 @@ class Bullet extends Circle {
 
     checkEdges(): void {
         // Remove bullets when off the bounds of the canvas.
-        if (this.pos.x < 0 || this.pos.x > canvas.width ||
-            this.pos.y < 0 || this.pos.y > canvas.width) {
+        if (this.pos.x + this.radius < 0 || this.pos.x - this.radius > canvas.width ||
+            this.pos.y + this.radius < 0 || this.pos.y - this.radius > canvas.width) {
             removeCircle(this);
         }
+    }
+
+    checkCollision(other: Circle): boolean {
+        // Calling the super implementation ensures the bullet changes velocity after hitting a target.
+        let isCollide: boolean = super.checkCollision(other);
+        
+        if (isCollide) {
+            this.scoreMultiplier += 1;
+            updateScore(this.scoreMultiplier)
+            removeCircle(other);
+        }
+        return isCollide;
     }
 }
