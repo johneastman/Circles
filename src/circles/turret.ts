@@ -8,7 +8,7 @@ export class Turret {
     turretEnd: Vector;
     canvasWidth: number
     canvasHeight: number
-    
+
     constructor(canvasWidth: number, canvasHeight: number) {
         this.canvasWidth = canvasWidth
         this.canvasHeight = canvasHeight
@@ -16,7 +16,7 @@ export class Turret {
         this.turretStart = new Vector(this.canvasWidth / 2, this.canvasHeight);
         this.turretEnd = new Vector(this.canvasWidth / 2, this.canvasHeight - this.turretLength);
     }
-    
+
     draw(context: CanvasRenderingContext2D) {
         context.beginPath();
         context.arc(this.canvasWidth / 2, this.canvasHeight, this.radius, 0, Math.PI, true);
@@ -32,7 +32,7 @@ export class Turret {
         context.lineWidth = 5;
         context.stroke();
     }
-    
+
     // Update where the turret is pointing based on the mouse position.
     update(mousePosVector: Vector): void {
         this.turretEnd = Vector.distanceFrom(this.turretStart, mousePosVector, this.turretLength)

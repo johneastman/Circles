@@ -34,3 +34,7 @@ export function getRandomInteger(min: number, max: number): number {
 export function sign(): number {
     return Math.random() < 0.5 ? -1 : 1;
 }
+
+export function getRandomColor() {
+    return colors[getRandomInteger(0, colors.length)];
+}

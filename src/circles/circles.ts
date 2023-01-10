@@ -1,6 +1,6 @@
 import { Color } from "./color";
 import { Vector } from "./vector";
-import { sign, getCurrentTime, getRandomFloat, getRandomInteger } from "./util"
+import { sign, getCurrentTime, getRandomFloat } from "./util"
 import App from "../App";
 
 export class Circle {
@@ -166,9 +166,9 @@ export class Circle {
 
 
 // Create a circle with random parameters.
-export class CircleRandom extends Circle {
+export class TargetCircle extends Circle {
 
-    constructor(app: App, colors: Color[]) {
+    constructor(app: App, color: Color) {
         // Lower and upper bounds for circle sizes
         let radiusLowerBound: number = 10;
         let radiusUpperBound: number = 30;
@@ -178,7 +178,6 @@ export class CircleRandom extends Circle {
         // Ensure that circle never leaves bounds of canvas.
         let x: number = getRandomFloat(radius, app.canvasWidth - radius);
         let y: number = getRandomFloat(radius, app.canvasHeight - radius);
-        let color: Color = colors[getRandomInteger(0, colors.length)];
         
         super(app, x, y, radius, color);
     }

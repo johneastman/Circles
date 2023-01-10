@@ -4,18 +4,18 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-import { Vector } from "./circles/vector";
-import { Color } from "./circles/color";
-import { Circle, CircleRandom, Bullet } from "./circles/circles";
-import { Turret } from "./circles/turret";
-
 // Main logic starts here
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
 );
 
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+    <React.StrictMode>
+        <App />
+    </React.StrictMode>
 );
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();
