@@ -1,7 +1,5 @@
-// Vector
-// Based on code found here:
-// https://github.com/adiman9/pureJSCollisions
-class Vector {
+// Vector Based on code found here: https://github.com/adiman9/pureJSCollisions
+export class Vector {
 
     x: number
     y: number

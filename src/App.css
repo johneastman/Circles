@@ -1,0 +1,22 @@
+#canvas {
+  border: 2px solid black;
+}
+
+#container {
+  display: block;
+  width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+li {
+  float: left;
+  padding: 16px;
+}

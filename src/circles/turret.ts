@@ -1,4 +1,6 @@
-class Turret {
+import { Vector } from "./vector";
+
+export class Turret {
 
     radius: number = 20;
     turretLength: number = 50;
@@ -15,7 +17,7 @@ class Turret {
         this.turretEnd = new Vector(this.canvasWidth / 2, this.canvasHeight - this.turretLength);
     }
     
-    draw() {
+    draw(context: CanvasRenderingContext2D) {
         context.beginPath();
         context.arc(this.canvasWidth / 2, this.canvasHeight, this.radius, 0, Math.PI, true);
         context.lineWidth = 1;
