@@ -8,25 +8,41 @@ interface CanvasProps {
     onMouseMove: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => void
 }
 
-class Canvas extends React.Component<CanvasProps, {}> {
+interface CanvasState {
+    canvas: HTMLCanvasElement
+    context: CanvasRenderingContext2D
+}
 
-    canvasReference: React.RefObject<Canvas>;
+class Canvas extends React.Component<CanvasProps, CanvasState> {
+
+    htmlRef: React.RefObject<HTMLCanvasElement>;
 
     constructor(props: CanvasProps) {
-      super(props);
+        super(props);
 
-      this.canvasReference = React.createRef();
+        this.htmlRef = React.createRef();
+    }
+
+    componentDidMount(): void {
+        let canvas: HTMLCanvasElement = this.htmlRef.current!;
+        let context: CanvasRenderingContext2D = canvas.getContext("2d")!;
+
+        this.setState({
+            canvas: canvas,
+            context: context
+        });
     }
 
     render() {
         return (
-        <canvas
-            id="canvas"
-            width={this.props.width}
-            height={this.props.height}
-            onClick={this.props.onClick}
-            onMouseMove={this.props.onMouseMove}
-        ></canvas>
+            <canvas
+                className="canvas"
+                ref={this.htmlRef}
+                width={this.props.width}
+                height={this.props.height}
+                onClick={this.props.onClick}
+                onMouseMove={this.props.onMouseMove}
+            ></canvas>
         );
     }
 }
