@@ -1,6 +1,7 @@
 import { Color } from "./color";
 import { Vector } from "./vector";
 import { sign, getCurrentTime, getRandomFloat, getRandomInteger } from "./util"
+import App from "../App";
 
 export class Circle {
     canvasWidth: number;
@@ -13,12 +14,14 @@ export class Circle {
     acc: Vector;
     collisionColorTimeActive: number;
     startTime: number;
+    app: App;
 
     colorOffset: number = 40;
 
-    constructor(canvasWidth: number, canvasHeight: number, x: number, y: number, radius: number, color: Color, velocity: Vector | undefined = undefined) {
-        this.canvasWidth = canvasWidth;
-        this.canvasHeight = canvasHeight;
+    constructor(app: App, x: number, y: number, radius: number, color: Color, velocity: Vector | undefined = undefined) {
+        this.app = app;
+        this.canvasWidth = app.canvasWidth;
+        this.canvasHeight = app.canvasHeight;
         
         /*
         When objects collide, the color should change to a lighter version of the given color. The amount lighter is specified
@@ -165,7 +168,7 @@ export class Circle {
 // Create a circle with random parameters.
 export class CircleRandom extends Circle {
 
-    constructor(canvasWidth: number, canvasHeight: number, colors: Color[]) {
+    constructor(app: App, colors: Color[]) {
         // Lower and upper bounds for circle sizes
         let radiusLowerBound: number = 10;
         let radiusUpperBound: number = 30;
@@ -173,11 +176,11 @@ export class CircleRandom extends Circle {
         let radius = getRandomFloat(radiusLowerBound, radiusUpperBound);
         
         // Ensure that circle never leaves bounds of canvas.
-        let x: number = getRandomFloat(radius, canvasWidth - radius);
-        let y: number = getRandomFloat(radius, canvasHeight - radius);
+        let x: number = getRandomFloat(radius, app.canvasWidth - radius);
+        let y: number = getRandomFloat(radius, app.canvasHeight - radius);
         let color: Color = colors[getRandomInteger(0, colors.length)];
         
-        super(canvasWidth, canvasHeight, x, y, radius, color);
+        super(app, x, y, radius, color);
     }
 }
 
@@ -191,7 +194,7 @@ export class Bullet extends Circle {
     */
     scoreMultiplier: number = 0
 
-    constructor(canvasWidth: number, canvasHeight: number, startPos: Vector, endPos: Vector) {
+    constructor(app: App, startPos: Vector, endPos: Vector) {
         /*
         Calculate the velocity of the bullet based on where the turret is pointing
         
@@ -200,12 +203,11 @@ export class Bullet extends Circle {
         let diffVec: Vector = Vector.sub(endPos, startPos);
         let length: number = diffVec.magnitude();
         let unit: Vector = Vector.div(diffVec, length);
-        let speed: number = 5;
+        let speed: number = 3;
         let vel: Vector = Vector.mul(unit, speed);
 
         super(
-            canvasWidth,
-            canvasHeight,
+            app,
             endPos.x,
             endPos.y,
             5,
@@ -218,7 +220,7 @@ export class Bullet extends Circle {
         // Remove bullets when off the bounds of the canvas.
         if (this.pos.x + this.radius < 0 || this.pos.x - this.radius > this.canvasWidth ||
             this.pos.y + this.radius < 0 || this.pos.y - this.radius > this.canvasHeight) {
-            //removeCircle(this);
+            this.app.removeCircle(this);
         }
     }
 
@@ -228,8 +230,8 @@ export class Bullet extends Circle {
         
         if (isCollide) {
             this.scoreMultiplier += 1;
-            //updateScore(this.scoreMultiplier)
-            //removeCircle(other);
+            this.app.updateScore(this);
+            this.app.removeCircle(other);
         }
         return isCollide;
     }
