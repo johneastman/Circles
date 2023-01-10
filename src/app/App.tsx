@@ -1,14 +1,20 @@
-import React from 'react';
+import React from "react";
 
-import './App.css';
-import { Circle, TargetCircle, Bullet } from "./circles/circles";
-import { Vector } from "./circles/vector";
-import { Turret } from "./circles/turret";
-import { getRandomColor } from  "./circles/util";
-import { Color } from "./circles/color";
-import Canvas from './canvas/Canvas';
+import "./App.css";
+import { Circle, TargetCircle, Bullet } from "../circles/circles";
+import { Vector } from "../circles/vector";
+import { Turret } from "../circles/turret";
+import { getRandomColor } from  "../circles/util";
+import { Color } from "../circles/color";
+import Canvas from '../canvas/Canvas';
 
-class App extends React.Component<{}, { score: number, circles: Circle[], turret: Turret }> {
+interface AppState {
+    score: number
+    circles: Circle[]
+    turret: Turret
+}
+
+class App extends React.Component<{}, AppState> {
     
     canvasWidth: number;
     canvasHeight: number;

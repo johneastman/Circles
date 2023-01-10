@@ -1,16 +1,18 @@
 import React from "react";
+import './Canvas.css';
 
-class Canvas extends React.Component<{
-        width: number,
-        height: number,
-        onClick: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => void,
-        onMouseMove: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => void
-    },
-    {}> {
+interface CanvasProps {
+    width: number
+    height: number
+    onClick: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => void
+    onMouseMove: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => void
+}
+
+class Canvas extends React.Component<CanvasProps, {}> {
 
     canvasReference: React.RefObject<Canvas>;
 
-    constructor(props: { width: number; height: number; onClick: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => void; onMouseMove: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => void; } | Readonly<{ width: number; height: number; onClick: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => void; onMouseMove: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => void; }>) {
+    constructor(props: CanvasProps) {
       super(props);
 
       this.canvasReference = React.createRef();

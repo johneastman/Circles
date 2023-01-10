@@ -1,7 +1,7 @@
 import { Color } from "./color";
 import { Vector } from "./vector";
 import { sign, getCurrentTime, getRandomFloat } from "./util"
-import App from "../App";
+import App from "../app/App";
 
 export class Circle {
     canvasWidth: number;
