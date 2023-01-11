@@ -25,7 +25,7 @@ class App extends React.Component<{}, AppState> {
         super(props);
 
         this.canvasWidth = 400;
-        this.canvasHeight = 200;
+        this.canvasHeight = 300;
         this.numCircles = 7;
 
         this.state = {
@@ -54,8 +54,9 @@ class App extends React.Component<{}, AppState> {
 
     // Fire a bullet when the user clicks on the canvas
     fireBullet(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void {
-        let startPos: Vector = new Vector(this.state.turret.turretStart.x, this.state.turret.turretStart.y);
-        let endPos: Vector = new Vector(this.state.turret.turretEnd.x, this.state.turret.turretEnd.y);    
+        let turret: Turret = this.state.turret;
+        let startPos: Vector = new Vector(turret.turretStart.x, turret.turretStart.y);
+        let endPos: Vector = new Vector(turret.turretEnd.x, turret.turretEnd.y);    
         let bullet = new Bullet(this, startPos, endPos);
 
         let circles: Circle[] = this.state.circles;
