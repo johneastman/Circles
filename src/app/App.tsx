@@ -32,7 +32,7 @@ class App extends React.Component<{}, AppState> {
             score: 0,
             circles: this.createCircles(),
             turret: new Turret(this.canvasWidth, this.canvasHeight)
-        }
+        };
 
         this.resetGame = this.resetGame.bind(this);
         this.turretFollowMouse = this.turretFollowMouse.bind(this);
@@ -89,14 +89,14 @@ class App extends React.Component<{}, AppState> {
 
                 context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
                 for (let circle of this.state.circles) {
-                circle.checkEdges();
-        
-                for (let c of this.state.circles) {
-                    c.checkCollision(circle);
-                }
-        
-                circle.update();
-                circle.draw(context);
+                    circle.checkEdges();
+            
+                    for (let c of this.state.circles) {
+                        c.checkCollision(circle);
+                    }
+            
+                    circle.update();
+                    circle.draw(context);
                 }
                 this.state.turret.draw(context);
             }
@@ -107,9 +107,9 @@ class App extends React.Component<{}, AppState> {
     createCircles(): Circle[] {
         let circles: Circle[] = [];
         for (let i = 0; i < this.numCircles; i++) {
-        let color: Color = getRandomColor();
-        let circle = new TargetCircle(this, color);
-        circles.push(circle);
+            let color: Color = getRandomColor();
+            let circle = new TargetCircle(this, color);
+            circles.push(circle);
         }
         return circles;
     }
@@ -127,15 +127,15 @@ class App extends React.Component<{}, AppState> {
         this.setState({score: this.state.score + bullet.scoreMultiplier});
     }
 
-    render() {
+    render(): JSX.Element {
         return (
-        <div className="container">
-            <ul>
-                <li>Score: { this.state.score }</li>
-                <li><button onClick={this.resetGame}>Reset Game</button></li>
-            </ul>
-            <Canvas ref={this.canvasRef} width={400} height={200} onClick={this.fireBullet} onMouseMove={this.turretFollowMouse} />
-        </div>
+            <div className="container">
+                <ul>
+                    <li>Score: { this.state.score }</li>
+                    <li><button onClick={this.resetGame}>Reset Game</button></li>
+                </ul>
+                <Canvas ref={this.canvasRef} width={400} height={200} onClick={this.fireBullet} onMouseMove={this.turretFollowMouse} />
+            </div>
         );
     }
 }
