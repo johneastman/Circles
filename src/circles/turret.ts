@@ -33,7 +33,7 @@ export class Turret {
         context.stroke();
     }
 
-    // Update where the turret is pointing based on the mouse position.
+    // Update where the turret barrel to always point toward the mouse
     update(mousePosVector: Vector): void {
         this.turretEnd = Vector.distanceFrom(this.turretStart, mousePosVector, this.turretLength)
     }

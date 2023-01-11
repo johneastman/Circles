@@ -37,6 +37,10 @@ class Canvas extends React.Component<CanvasProps, CanvasState> {
         return this.state.canvas.getBoundingClientRect();
     }
 
+    clear(): void {
+        this.state.context.clearRect(0, 0, this.props.width, this.props.height);
+    }
+
     render() {
         return (
             <canvas

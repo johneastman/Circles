@@ -78,18 +78,28 @@ class App extends React.Component<{}, AppState> {
     mainLoop() {
         let canvas: Canvas | null = this.canvasRef.current;
         if (canvas != null && canvas.state != null) {
+            canvas.clear();
+
             let context: CanvasRenderingContext2D = canvas.state.context;
 
-            context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-            for (let circle of this.state.circles) {
-                circle.checkEdges();
-        
-                for (let c of this.state.circles) {
-                    c.checkCollision(circle);
+            let circles: Circle[] = this.state.circles;
+            for (let i = 0; i < circles.length; i++) {
+                const current: Circle = circles[i];
+
+                /*
+                Check collisions with the circles after the current circle in the array. Collisions with circles before the
+                current circle in the array do not need to be checked due to the commutative property (e.g., if A collides
+                with B, then B has, in a sense, collided with A).
+                */
+                const rest: Circle[] = circles.slice(i + 1);
+
+                for (let circle of rest) {
+                    circle.checkCollision(current);
                 }
-        
-                circle.update();
-                circle.draw(context);
+
+                current.checkEdges(); // Handle how circles respond at the edges of the canvas
+                current.update();
+                current.draw(context);
             }
             this.state.turret.draw(context);
         }
