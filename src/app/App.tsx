@@ -44,8 +44,7 @@ class App extends React.Component<{}, AppState> {
 
     // Make the turret follow the player's mouse
     turretFollowMouse(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void {
-        let canvas: HTMLCanvasElement = this.canvasRef.current!.state.canvas;
-        let rect: DOMRect = canvas.getBoundingClientRect();
+        let rect: DOMRect = this.canvasRef.current!.getBoundingClientRect();
         let mouseVector: Vector = new Vector(e.clientX - rect.left, e.clientY - rect.top);
 
         let turret: Turret = this.state.turret;
@@ -72,34 +71,26 @@ class App extends React.Component<{}, AppState> {
     }
 
     componentDidMount() {
-        let canvas: Canvas = this.canvasRef.current!;
-
-        this.canvasWidth = canvas.props.width;
-        this.canvasHeight = canvas.props.height;
-
         this.mainLoop();
     }
 
     mainLoop() {
         let canvas: Canvas | null = this.canvasRef.current;
-        if (canvas != null) {
+        if (canvas != null && canvas.state != null) {
+            let context: CanvasRenderingContext2D = canvas.state.context;
 
-            if (canvas.state != null) {
-                let context: CanvasRenderingContext2D = canvas.state.context;
-
-                context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-                for (let circle of this.state.circles) {
-                    circle.checkEdges();
-            
-                    for (let c of this.state.circles) {
-                        c.checkCollision(circle);
-                    }
-            
-                    circle.update();
-                    circle.draw(context);
+            context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+            for (let circle of this.state.circles) {
+                circle.checkEdges();
+        
+                for (let c of this.state.circles) {
+                    c.checkCollision(circle);
                 }
-                this.state.turret.draw(context);
+        
+                circle.update();
+                circle.draw(context);
             }
+            this.state.turret.draw(context);
         }
         requestAnimationFrame(this.mainLoop);
     }
@@ -134,7 +125,7 @@ class App extends React.Component<{}, AppState> {
                     <li>Score: { this.state.score }</li>
                     <li><button onClick={this.resetGame}>Reset Game</button></li>
                 </ul>
-                <Canvas ref={this.canvasRef} width={400} height={200} onClick={this.fireBullet} onMouseMove={this.turretFollowMouse} />
+                <Canvas ref={this.canvasRef} width={this.canvasWidth} height={this.canvasHeight} onClick={this.fireBullet} onMouseMove={this.turretFollowMouse} />
             </div>
         );
     }

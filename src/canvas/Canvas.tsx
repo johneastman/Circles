@@ -33,6 +33,10 @@ class Canvas extends React.Component<CanvasProps, CanvasState> {
         });
     }
 
+    getBoundingClientRect(): DOMRect {
+        return this.state.canvas.getBoundingClientRect();
+    }
+
     render() {
         return (
             <canvas
