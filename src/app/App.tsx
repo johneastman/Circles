@@ -9,9 +9,10 @@ import { Color } from "../circles/color";
 import Canvas from '../canvas/Canvas';
 
 interface AppState {
-    score: number
-    circles: Circle[]
-    turret: Turret
+    score: number;
+    circles: Circle[];
+    turret: Turret;
+    isPaused: boolean; // for pausing the game
 }
 
 class App extends React.Component<{}, AppState> {
@@ -33,13 +34,9 @@ class App extends React.Component<{}, AppState> {
             circles: this.createCircles(),
             turret: new Turret(
                 new Vector(this.canvasWidth / 2, this.canvasHeight)
-            )
+            ),
+            isPaused: false
         };
-
-        this.resetGame = this.resetGame.bind(this);
-        this.turretFollowMouse = this.turretFollowMouse.bind(this);
-        this.fireBullet = this.fireBullet.bind(this);
-        this.mainLoop = this.mainLoop.bind(this);
 
         this.canvasRef = React.createRef();
     }
@@ -71,37 +68,44 @@ class App extends React.Component<{}, AppState> {
         });
     }
 
+    pauseGame(_: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+        this.setState({isPaused: !this.state.isPaused});
+    }
+
     componentDidMount() {
         this.mainLoop();
     }
 
     mainLoop() {
-        let canvas: Canvas | null = this.canvasRef.current;
-        if (canvas != null && canvas.state != null) {
-            canvas.clear();
-
-            let circles: Circle[] = this.state.circles;
-            for (let i = 0; i < circles.length; i++) {
-                const current: Circle = circles[i];
-
-                /*
-                Check collisions with the circles after the current circle in the array. Collisions with circles before the
-                current circle in the array do not need to be checked due to the commutative property (e.g., if A collides
-                with B, then B has, in a sense, collided with A).
-                */
-                const rest: Circle[] = circles.slice(i + 1);
-
-                for (let circle of rest) {
-                    circle.checkCollision(current);
+        if (!this.state.isPaused) {
+            let canvas: Canvas | null = this.canvasRef.current;
+            if (canvas != null && canvas.state != null) {
+                canvas.clear();
+    
+                let circles: Circle[] = this.state.circles;
+                for (let i = 0; i < circles.length; i++) {
+                    const current: Circle = circles[i];
+    
+                    /*
+                    Check collisions with the circles after the current circle in the array. Collisions with circles before the
+                    current circle in the array do not need to be checked due to the commutative property (e.g., if A collides
+                    with B, then B has, in a sense, collided with A).
+                    */
+                    const rest: Circle[] = circles.slice(i + 1);
+    
+                    for (let circle of rest) {
+                        circle.checkCollision(current);
+                    }
+    
+                    current.checkEdges(); // Handle how circles respond at the edges of the canvas
+                    current.update();
+                    canvas.draw(current);
                 }
-
-                current.checkEdges(); // Handle how circles respond at the edges of the canvas
-                current.update();
-                canvas.draw(current);
+                canvas.draw(this.state.turret);
             }
-            canvas.draw(this.state.turret);
         }
-        requestAnimationFrame(this.mainLoop);
+
+        requestAnimationFrame(this.mainLoop.bind(this));
     }
 
     createCircles(): Circle[] {
@@ -132,9 +136,16 @@ class App extends React.Component<{}, AppState> {
             <div className="container">
                 <ul>
                     <li>Score: { this.state.score }</li>
-                    <li><button onClick={this.resetGame}>Reset Game</button></li>
+                    <li><button onClick={this.resetGame.bind(this)}>Reset Game</button></li>
+                    <li><button onClick={this.pauseGame.bind(this)}>{this.state.isPaused ? "Play" : "Pause"}</button></li>
                 </ul>
-                <Canvas ref={this.canvasRef} width={this.canvasWidth} height={this.canvasHeight} onClick={this.fireBullet} onMouseMove={this.turretFollowMouse} />
+                <Canvas
+                    ref={this.canvasRef}
+                    width={this.canvasWidth}
+                    height={this.canvasHeight}
+                    onClick={this.fireBullet.bind(this)}
+                    onMouseMove={this.turretFollowMouse.bind(this)}
+                />
             </div>
         );
     }
