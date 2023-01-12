@@ -59,7 +59,7 @@ class App extends React.Component<{}, AppState> {
                                 in "this.state.circles", the game will immediately pause and continually add the same
                                 score to the high-score component.
                                 */
-                                disabled={this.state.circles.length == 0}
+                                disabled={this.state.circles.length === 0}
                                 onClick={this.pauseGame.bind(this)}>{this.state.isPaused ? "Play" : "Pause"}
                             </button>
                         </li>
@@ -90,7 +90,7 @@ class App extends React.Component<{}, AppState> {
     }
 
     componentDidUpdate() {
-        if (!this.state.isPaused && this.state.circles.length == 0) {
+        if (!this.state.isPaused && this.state.circles.length === 0) {
             this.highScoreRef.current?.addScore(this.state.score);
 
             // Pause the game so the score is not continually added to the high-score board
