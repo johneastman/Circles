@@ -56,8 +56,10 @@ class App extends React.Component<{}, AppState> {
                                 /*
                                 The play/pause button needs to be disabled when the end-game state is reached because if
                                 the user clicks play, the game will immediately unpause, but because there are no objects
-                                in "this.state.circles", the game will immediately pause and continually add the same
+                                in "this.state.circles", the game will immediately pause again and continually add the same
                                 score to the high-score component.
+
+                                If the player wants to play another round, they'll have to click "Reset Game".
                                 */
                                 disabled={this.state.circles.length === 0}
                                 onClick={this.pauseGame.bind(this)}>{this.state.isPaused ? "Play" : "Pause"}

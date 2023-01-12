@@ -18,13 +18,14 @@ export class HighScores extends React.Component<HighScoresProps, HighScoresState
         };
     }
 
-
     render(): JSX.Element {
+        let scores: number[] = this.state.scores;
+        
         return (
             <div>
                 <strong>High Scores</strong>
-                {this.state.scores.length > 0
-                    ? this.state.scores.map((score, index) => <p key={index + 1}>#{index + 1}: {score}</p>)
+                {scores.length > 0
+                    ? scores.map((score, index) => <p key={index + 1}>#{index + 1}: {score}</p>)
                     : <p>No high scores</p>
                 }
             </div>
