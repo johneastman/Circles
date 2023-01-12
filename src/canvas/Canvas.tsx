@@ -1,5 +1,6 @@
 import React from "react";
 import './Canvas.css';
+import { Sprite } from "../circles/sprite";
 
 interface CanvasProps {
     width: number
@@ -39,6 +40,10 @@ class Canvas extends React.Component<CanvasProps, CanvasState> {
 
     clear(): void {
         this.state.context.clearRect(0, 0, this.props.width, this.props.height);
+    }
+
+    draw(sprite: Sprite): void {
+        sprite.draw(this.state.context);
     }
 
     render() {

@@ -1,40 +1,41 @@
+import Canvas from "../canvas/Canvas";
+import { Sprite } from "./sprite";
 import { Vector } from "./vector";
 
-export class Turret {
-
+export class Turret implements Sprite {
     radius: number = 20;
     turretLength: number = 50;
-    turretStart: Vector;
-    turretEnd: Vector;
-    canvasWidth: number
-    canvasHeight: number
+    barrelStart: Vector;
+    barrelEnd: Vector;
 
-    constructor(canvasWidth: number, canvasHeight: number) {
-        this.canvasWidth = canvasWidth
-        this.canvasHeight = canvasHeight
-        
-        this.turretStart = new Vector(this.canvasWidth / 2, this.canvasHeight);
-        this.turretEnd = new Vector(this.canvasWidth / 2, this.canvasHeight - this.turretLength);
+    /*
+    position: where to place the turret. This will be the (x, y) position for the base of the turret.
+    */
+    constructor(position: Vector) {        
+        this.barrelStart = position;
+        this.barrelEnd = new Vector(position.x, position.y - this.turretLength);
     }
 
-    draw(context: CanvasRenderingContext2D) {
+    draw(context: CanvasRenderingContext2D): void {        
         context.beginPath();
-        context.arc(this.canvasWidth / 2, this.canvasHeight, this.radius, 0, Math.PI, true);
+
+        // first two parameters to arc: (x, y) position of centerpoint for arc
+        context.arc(this.barrelStart.x, this.barrelStart.y, this.radius, 0, Math.PI, true);
         context.lineWidth = 1;
         context.fillStyle = "black";
         context.fill();
         context.stroke();
-        
-        // Turret cannon (the part that follows the mouse)
+
+        // Turret barrel (the part that follows the mouse)
         context.beginPath();
-        context.moveTo(this.canvasWidth / 2, this.canvasHeight);
-        context.lineTo(this.turretEnd.x, this.turretEnd.y);
+        context.moveTo(this.barrelStart.x, this.barrelStart.y);
+        context.lineTo(this.barrelEnd.x, this.barrelEnd.y);
         context.lineWidth = 5;
         context.stroke();
     }
 
     // Update where the turret barrel to always point toward the mouse
     update(mousePosVector: Vector): void {
-        this.turretEnd = Vector.distanceFrom(this.turretStart, mousePosVector, this.turretLength)
+        this.barrelEnd = Vector.distanceFrom(this.barrelStart, mousePosVector, this.turretLength)
     }
 }

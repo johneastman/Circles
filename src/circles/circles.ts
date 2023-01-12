@@ -2,8 +2,10 @@ import { Color } from "./color";
 import { Vector } from "./vector";
 import { sign, getCurrentTime, getRandomFloat } from "./util"
 import App from "../app/App";
+import Canvas from "../canvas/Canvas";
+import { Sprite } from "./sprite";
 
-export class Circle {
+export class Circle implements Sprite {
     canvasWidth: number;
     canvasHeight: number;
     defaultColor: string;
@@ -227,7 +229,8 @@ export class Bullet extends Circle {
         // Calling the super implementation ensures the bullet changes velocity after hitting a target.
         let isCollide: boolean = super.checkCollision(other);
         
-        if (isCollide) {
+        // Bullets will bounce off each other but not contribute to the player's score if they collide with one another.
+        if (isCollide && !(other instanceof Bullet)) {
             this.scoreMultiplier += 1;
             this.app.updateScore(this);
             this.app.removeCircle(other);

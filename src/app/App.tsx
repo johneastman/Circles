@@ -31,7 +31,9 @@ class App extends React.Component<{}, AppState> {
         this.state = {
             score: 0,
             circles: this.createCircles(),
-            turret: new Turret(this.canvasWidth, this.canvasHeight)
+            turret: new Turret(
+                new Vector(this.canvasWidth / 2, this.canvasHeight)
+            )
         };
 
         this.resetGame = this.resetGame.bind(this);
@@ -53,18 +55,16 @@ class App extends React.Component<{}, AppState> {
     }
 
     // Fire a bullet when the user clicks on the canvas
-    fireBullet(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void {
+    fireBullet(_: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void {
         let turret: Turret = this.state.turret;
-        let startPos: Vector = new Vector(turret.turretStart.x, turret.turretStart.y);
-        let endPos: Vector = new Vector(turret.turretEnd.x, turret.turretEnd.y);    
-        let bullet = new Bullet(this, startPos, endPos);
+        let bullet = new Bullet(this, turret.barrelStart, turret.barrelEnd);
 
         let circles: Circle[] = this.state.circles;
         circles.push(bullet);
         this.setState({circles: circles});
     }
 
-    resetGame(e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+    resetGame(_: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
         this.setState({
             score: 0,
             circles: this.createCircles()
@@ -79,8 +79,6 @@ class App extends React.Component<{}, AppState> {
         let canvas: Canvas | null = this.canvasRef.current;
         if (canvas != null && canvas.state != null) {
             canvas.clear();
-
-            let context: CanvasRenderingContext2D = canvas.state.context;
 
             let circles: Circle[] = this.state.circles;
             for (let i = 0; i < circles.length; i++) {
@@ -99,9 +97,9 @@ class App extends React.Component<{}, AppState> {
 
                 current.checkEdges(); // Handle how circles respond at the edges of the canvas
                 current.update();
-                current.draw(context);
+                canvas.draw(current);
             }
-            this.state.turret.draw(context);
+            canvas.draw(this.state.turret);
         }
         requestAnimationFrame(this.mainLoop);
     }
