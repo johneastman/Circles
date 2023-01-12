@@ -3,6 +3,10 @@ A simple browser game made with React and TypeScript where the user shoots circl
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Setup
+1. Download and install [Node and npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
+1. Run `npm install`.
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -19,6 +23,8 @@ You will also see any lint errors in the console.
 
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+To run the tests in non-interactive mode, run `npm test -- --watchAll=false`.
 
 ### `npm run build`
 
