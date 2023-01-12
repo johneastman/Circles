@@ -1,6 +1,6 @@
 import React from "react";
 import './Canvas.css';
-import { Sprite } from "../circles/sprite";
+import { Sprite } from "../../game/sprite";
 
 interface CanvasProps {
     width: number
@@ -24,6 +24,19 @@ class Canvas extends React.Component<CanvasProps, CanvasState> {
         this.htmlRef = React.createRef();
     }
 
+    render() {
+        return (
+            <canvas
+                className="canvas"
+                ref={this.htmlRef}
+                width={this.props.width}
+                height={this.props.height}
+                onClick={this.props.onClick}
+                onMouseMove={this.props.onMouseMove}
+            ></canvas>
+        );
+    }
+
     componentDidMount(): void {
         let canvas: HTMLCanvasElement = this.htmlRef.current!;
         let context: CanvasRenderingContext2D = canvas.getContext("2d")!;
@@ -44,19 +57,6 @@ class Canvas extends React.Component<CanvasProps, CanvasState> {
 
     draw(sprite: Sprite): void {
         sprite.draw(this.state.context);
-    }
-
-    render() {
-        return (
-            <canvas
-                className="canvas"
-                ref={this.htmlRef}
-                width={this.props.width}
-                height={this.props.height}
-                onClick={this.props.onClick}
-                onMouseMove={this.props.onMouseMove}
-            ></canvas>
-        );
     }
 }
 

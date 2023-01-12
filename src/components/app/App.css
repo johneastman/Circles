@@ -1,0 +1,29 @@
+.container {
+  text-align: center;
+}
+
+.menu ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.menu li {
+  display: inline-block;
+  padding: 0.5rem;
+}
+
+.game ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.game li {
+  display: inline-block;
+  text-align:start;
+  padding: 0.5rem;
+  vertical-align: top;
+}

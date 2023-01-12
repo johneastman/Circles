@@ -1,18 +1,19 @@
 import React from "react";
 
 import "./App.css";
-import { Circle, TargetCircle, Bullet } from "../circles/circles";
-import { Vector } from "../circles/vector";
-import { Turret } from "../circles/turret";
-import { getRandomColor } from  "../circles/util";
-import { Color } from "../circles/color";
+import { Circle, TargetCircle, Bullet } from "../../game/circles";
+import { Vector } from "../../game/vector";
+import { Turret } from "../../game/turret";
+import { getRandomColor } from  "../../game/util";
+import { Color } from "../../game/color";
 import Canvas from '../canvas/Canvas';
+import { HighScores } from "../highScores/HighScores";
 
 interface AppState {
     score: number;
     circles: Circle[];
     turret: Turret;
-    isPaused: boolean; // for pausing the game
+    isPaused: boolean; // for pausing/unpausing the game
 }
 
 class App extends React.Component<{}, AppState> {
@@ -21,6 +22,7 @@ class App extends React.Component<{}, AppState> {
     canvasHeight: number;
     numCircles: number;
     canvasRef: React.RefObject<Canvas>;
+    highScoreRef: React.RefObject<HighScores>;
 
     constructor(props: {}) {
         super(props);
@@ -39,6 +41,61 @@ class App extends React.Component<{}, AppState> {
         };
 
         this.canvasRef = React.createRef();
+        this.highScoreRef = React.createRef();
+    }
+
+    render(): JSX.Element {
+        return (
+            <div className="container">
+                <div className="menu">
+                    <ul>
+                        <li>Score: { this.state.score }</li>
+                        <li><button onClick={this.resetGame.bind(this)}>Reset Game</button></li>
+                        <li>
+                            <button
+                                /*
+                                The play/pause button needs to be disabled when the end-game state is reached because if
+                                the user clicks play, the game will immediately unpause, but because there are no objects
+                                in "this.state.circles", the game will immediately pause and continually add the same
+                                score to the high-score component.
+                                */
+                                disabled={this.state.circles.length == 0}
+                                onClick={this.pauseGame.bind(this)}>{this.state.isPaused ? "Play" : "Pause"}
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div className="game">
+                    <ul>
+                        <li>
+                            <Canvas
+                                ref={this.canvasRef}
+                                width={this.canvasWidth}
+                                height={this.canvasHeight}
+                                onClick={this.fireBullet.bind(this)}
+                                onMouseMove={this.turretFollowMouse.bind(this)}
+                            />
+                        </li>
+                        <li>
+                            <HighScores ref={this.highScoreRef} numTopScores={3} />
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        );
+    }
+
+    componentDidMount() {
+        this.mainLoop();
+    }
+
+    componentDidUpdate() {
+        if (!this.state.isPaused && this.state.circles.length == 0) {
+            this.highScoreRef.current?.addScore(this.state.score);
+
+            // Pause the game so the score is not continually added to the high-score board
+            this.setState({isPaused: true});
+        }
     }
 
     // Make the turret follow the player's mouse
@@ -64,16 +121,13 @@ class App extends React.Component<{}, AppState> {
     resetGame(_: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
         this.setState({
             score: 0,
-            circles: this.createCircles()
+            circles: this.createCircles(),
+            isPaused: false
         });
     }
 
     pauseGame(_: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
         this.setState({isPaused: !this.state.isPaused});
-    }
-
-    componentDidMount() {
-        this.mainLoop();
     }
 
     mainLoop() {
@@ -129,25 +183,6 @@ class App extends React.Component<{}, AppState> {
 
     updateScore(bullet: Bullet): void {
         this.setState({score: this.state.score + bullet.scoreMultiplier});
-    }
-
-    render(): JSX.Element {
-        return (
-            <div className="container">
-                <ul>
-                    <li>Score: { this.state.score }</li>
-                    <li><button onClick={this.resetGame.bind(this)}>Reset Game</button></li>
-                    <li><button onClick={this.pauseGame.bind(this)}>{this.state.isPaused ? "Play" : "Pause"}</button></li>
-                </ul>
-                <Canvas
-                    ref={this.canvasRef}
-                    width={this.canvasWidth}
-                    height={this.canvasHeight}
-                    onClick={this.fireBullet.bind(this)}
-                    onMouseMove={this.turretFollowMouse.bind(this)}
-                />
-            </div>
-        );
     }
 }
 
