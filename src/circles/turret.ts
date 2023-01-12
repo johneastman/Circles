@@ -1,4 +1,3 @@
-import Canvas from "../canvas/Canvas";
 import { Sprite } from "./sprite";
 import { Vector } from "./vector";
 

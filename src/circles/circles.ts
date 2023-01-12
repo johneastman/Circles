@@ -2,7 +2,6 @@ import { Color } from "./color";
 import { Vector } from "./vector";
 import { sign, getCurrentTime, getRandomFloat } from "./util"
 import App from "../app/App";
-import Canvas from "../canvas/Canvas";
 import { Sprite } from "./sprite";
 
 export class Circle implements Sprite {
