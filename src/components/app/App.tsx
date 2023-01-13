@@ -29,7 +29,7 @@ class App extends React.Component<{}, AppState> {
 
         this.canvasWidth = 400;
         this.canvasHeight = 300;
-        this.numCircles = 0;
+        this.numCircles = 7;
 
         this.state = {
             score: 0,
@@ -67,21 +67,21 @@ class App extends React.Component<{}, AppState> {
                         </li>
                     </ul>
                 </div>
-                <div className="game">
-                    <ul>
-                        <li>
-                            <Canvas
-                                ref={this.canvasRef}
-                                width={this.canvasWidth}
-                                height={this.canvasHeight}
-                                onClick={this.fireBullet.bind(this)}
-                                onMouseMove={this.turretFollowMouse.bind(this)}
-                            />
-                        </li>
-                        <li>
+                <div className="gameWrapper" /* Position div right of center div: http://jsfiddle.net/1Lrph45y/4/ */ >
+                    <div className="center">
+                        <Canvas
+                            ref={this.canvasRef}
+                            width={this.canvasWidth}
+                            height={this.canvasHeight}
+                            onClick={this.fireBullet.bind(this)}
+                            onMouseMove={this.turretFollowMouse.bind(this)}
+                        />
+                    </div>
+                    <div className="scoreBoardFloating">
+                        <div className="scoreBoard">
                             <HighScores ref={this.highScoreRef} numTopScores={3} />
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         );
