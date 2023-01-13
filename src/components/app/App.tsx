@@ -29,7 +29,7 @@ class App extends React.Component<{}, AppState> {
 
         this.canvasWidth = 400;
         this.canvasHeight = 300;
-        this.numCircles = 7;
+        this.numCircles = 0;
 
         this.state = {
             score: 0,
