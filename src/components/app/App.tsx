@@ -1,9 +1,9 @@
 import React from "react";
 
 import "./App.css";
-import { Circle, TargetCircle, Bullet } from "../../game/circles";
+import { Circle, TargetCircle, Bullet } from "../../sprites/circles";
 import { Vector } from "../../game/vector";
-import { Turret } from "../../game/turret";
+import { Turret } from "../../sprites/turret";
 import { getRandomColor } from  "../../game/util";
 import { Color } from "../../game/color";
 import Canvas from '../canvas/Canvas';

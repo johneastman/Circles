@@ -1,6 +1,6 @@
 import React from "react";
 import './Canvas.css';
-import { Sprite } from "../../game/sprite";
+import { Sprite } from "../../sprites/sprite";
 
 interface CanvasProps {
     width: number

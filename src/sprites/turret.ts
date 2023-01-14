@@ -1,7 +1,7 @@
 import App from "../components/app/App";
 import { Bullet } from "./circles";
 import { Sprite } from "./sprite";
-import { Vector } from "./vector";
+import { Vector } from "../game/vector";
 
 export class Turret implements Sprite {
     radius: number = 20;

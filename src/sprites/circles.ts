@@ -1,6 +1,6 @@
-import { Color } from "./color";
-import { Vector } from "./vector";
-import { sign, getCurrentTime, getRandomFloat } from "./util"
+import { Color } from "../game/color";
+import { Vector } from "../game/vector";
+import { sign, getCurrentTime, getRandomFloat } from "../game/util"
 import App from "../components/app/App";
 import { Sprite } from "./sprite";
 
