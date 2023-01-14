@@ -1,0 +1,12 @@
+.turretMode {
+  text-align: left;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.turretMode li {
+  display: inline-block;
+  padding: 0.5rem;
+}

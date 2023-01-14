@@ -8,6 +8,7 @@ import { getRandomColor } from  "../../game/util";
 import { Color } from "../../game/color";
 import Canvas from '../canvas/Canvas';
 import { HighScores } from "../highScores/HighScores";
+import { TurretMode } from "../turret_mode/TurretMode";
 
 interface AppState {
     score: number;
@@ -23,6 +24,7 @@ class App extends React.Component<{}, AppState> {
     numCircles: number;
     canvasRef: React.RefObject<Canvas>;
     highScoreRef: React.RefObject<HighScores>;
+    turretModeRef: React.RefObject<TurretMode>;
 
     constructor(props: {}) {
         super(props);
@@ -42,6 +44,7 @@ class App extends React.Component<{}, AppState> {
 
         this.canvasRef = React.createRef();
         this.highScoreRef = React.createRef();
+        this.turretModeRef = React.createRef();
     }
 
     render(): JSX.Element {
@@ -76,6 +79,7 @@ class App extends React.Component<{}, AppState> {
                             onClick={this.fireBullet.bind(this)}
                             onMouseMove={this.turretFollowMouse.bind(this)}
                         />
+                        <TurretMode ref={this.turretModeRef} />
                     </div>
                     <div className="scoreBoardFloating">
                         <div className="scoreBoard">
@@ -88,7 +92,6 @@ class App extends React.Component<{}, AppState> {
     }
 
     componentDidMount() {
-        document.addEventListener("keydown", this.changeTurretMode.bind(this));
         this.mainLoop();
     }
 
@@ -111,17 +114,11 @@ class App extends React.Component<{}, AppState> {
         this.setState({turret: turret});
     }
 
-    changeTurretMode(keyboardEvent: KeyboardEvent): void {
-        let turret: Turret = this.state.turret;
-        turret.setMode(keyboardEvent.key);
-        this.setState({turret: turret});
-    }
-
     // Fire a bullet when the user clicks on the canvas
     fireBullet(_: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void {
         let turret: Turret = this.state.turret;
 
-        let bullets: Bullet[] = turret.getBullets(this);
+        let bullets: Bullet[] = turret.getBullets(this, this.turretModeRef.current?.state.mode!);
         
         let circles: Circle[] = this.state.circles;
         circles = circles.concat(bullets);

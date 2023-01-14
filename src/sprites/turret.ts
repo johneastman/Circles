@@ -2,6 +2,7 @@ import App from "../components/app/App";
 import { Bullet } from "./circles";
 import { Sprite } from "./sprite";
 import { Vector } from "../game/vector";
+import { Mode } from "../components/turret_mode/TurretMode";
 
 export class Turret implements Sprite {
     radius: number = 20;
@@ -9,15 +10,12 @@ export class Turret implements Sprite {
     barrelStart: Vector;
     barrelEnd: Vector;
 
-    mode: string;
-
     /*
     position: where to place the turret. This will be the (x, y) position for the base of the turret.
     */
     constructor(position: Vector) {        
         this.barrelStart = position;
         this.barrelEnd = new Vector(position.x, position.y - this.turretLength);
-        this.mode = "DEFAULT";
     }
 
     draw(context: CanvasRenderingContext2D): void {        
@@ -44,29 +42,13 @@ export class Turret implements Sprite {
         this.barrelEnd = Vector.distanceFrom(this.barrelStart, mousePosVector, this.turretLength)
     }
 
-    setMode(key: string) {
-        switch(key) {
-            case "1":
-                this.mode = "DEFAULT";
-                break;
-
-            case "2":
-                this.mode = "MANY";
-                break;
-            
-            default:
-                this.mode = "DEFAULT";
-                break;
-        }
-    }
-
-    getBullets(app: App): Bullet[] {
+    getBullets(app: App, turretMode: Mode): Bullet[] {
         let bullets: Bullet[] = [];
 
         let bullet: Bullet = new Bullet(app, this.barrelStart, this.barrelEnd);
         bullets.push(bullet);
 
-        if (this.mode === "MANY") {
+        if (turretMode === Mode.many) {
             /*
             Calculate third point of right triangle with 2 points and a known distance:
             https://math.stackexchange.com/a/2126315
