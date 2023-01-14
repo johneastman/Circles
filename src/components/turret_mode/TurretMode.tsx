@@ -1,13 +1,18 @@
 import React from "react";
 import "./TurretMode.css"
 
-export enum Mode {
-    default = "Default",
-    many = "Many"
+export class Mode {
+    static DEFAULT: string = "Default";
+    static MANY: string = "Many";
+
+    static KEYBOARD_TO_MODE: Map<string, string> = new Map([
+        ["1", this.DEFAULT],
+        ["2", this.MANY]
+    ]);
 }
 
 interface TurretModeState {
-    mode: Mode
+    mode: string
 }
 
 export class TurretMode extends React.Component<{}, TurretModeState> {
@@ -15,7 +20,7 @@ export class TurretMode extends React.Component<{}, TurretModeState> {
     constructor(props: {}) {
         super(props);
         this.state = {
-            mode: Mode.default
+            mode: Mode.DEFAULT
         };
     }
 
@@ -27,21 +32,17 @@ export class TurretMode extends React.Component<{}, TurretModeState> {
         return (
             <ul key="turretModes" className="turretMode" data-testid="turretModes">
                 {
-                    Object.values(Mode).map((mode, index) =>
-                        mode === this.state.mode.valueOf()
-                        ? <li key={index}><strong>{mode}</strong></li>
-                        : <li key={index}>{mode}</li>
-                    )
+                    Array.from(Mode.KEYBOARD_TO_MODE).map((mode, index) => {
+                        let keyboardKey: string = mode[0];
+                        let modeName: string = mode[1];
+                        return <li key={index} style={modeName === this.state.mode ? {fontWeight: "bold"} : {}}>{`${modeName} (${keyboardKey})`}</li>
+                    })
                 }
             </ul>
         )
     }
 
     changeTurretMode(keyboardEvent: KeyboardEvent): void {
-        let modes: Map<string, Mode> = new Map([
-            ["1", Mode.default],
-            ["2", Mode.many]
-        ]);
-        this.setState({mode: modes.get(keyboardEvent.key) || Mode.default});
+        this.setState({mode: Mode.KEYBOARD_TO_MODE.get(keyboardEvent.key) || Mode.DEFAULT});
     }
 }
