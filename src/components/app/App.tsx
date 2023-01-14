@@ -29,7 +29,7 @@ class App extends React.Component<{}, AppState> {
 
         this.canvasWidth = 400;
         this.canvasHeight = 300;
-        this.numCircles = 7;
+        this.numCircles = 8;
 
         this.state = {
             score: 0,
@@ -88,6 +88,7 @@ class App extends React.Component<{}, AppState> {
     }
 
     componentDidMount() {
+        document.addEventListener("keydown", this.changeTurretMode.bind(this));
         this.mainLoop();
     }
 
@@ -110,13 +111,20 @@ class App extends React.Component<{}, AppState> {
         this.setState({turret: turret});
     }
 
+    changeTurretMode(keyboardEvent: KeyboardEvent): void {
+        let turret: Turret = this.state.turret;
+        turret.setMode(keyboardEvent.key);
+        this.setState({turret: turret});
+    }
+
     // Fire a bullet when the user clicks on the canvas
     fireBullet(_: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void {
         let turret: Turret = this.state.turret;
-        let bullet = new Bullet(this, turret.barrelStart, turret.barrelEnd);
 
+        let bullets: Bullet[] = turret.getBullets(this);
+        
         let circles: Circle[] = this.state.circles;
-        circles.push(bullet);
+        circles = circles.concat(bullets);
         this.setState({circles: circles});
     }
 
