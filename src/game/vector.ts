@@ -35,7 +35,7 @@ export class Vector {
     Calculate third point of right triangle with 2 points and a known distance:
     https://math.stackexchange.com/a/2126315
     */
-    static perpendicularTo(lineStart: Vector, lineEnd: Vector): Vector[] {
+    static perpendicularTo(lineStart: Vector, lineEnd: Vector, offsetDistance: number): Vector[] {
         let x1: number = lineStart.x;
         let x2: number = lineEnd.x;
 
@@ -43,10 +43,9 @@ export class Vector {
         let y2: number = lineEnd.y;
 
         let L: number = lineStart.distance(lineEnd);
-        let c: number = 8; // distance from given point
 
-        let xOffset: number = (c * (y1 - y2)) / L;
-        let yOffset: number = (c * (x2 - x1)) / L;
+        let xOffset: number = (offsetDistance * (y1 - y2)) / L;
+        let yOffset: number = (offsetDistance * (x2 - x1)) / L;
 
         return [
             new Vector(x2 + xOffset, y2 + yOffset), // positive offset

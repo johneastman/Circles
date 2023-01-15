@@ -49,7 +49,7 @@ export class Turret implements Sprite {
         bullets.push(bullet);
 
         if (turretMode === Mode.MANY) {
-            let perpendicularPoints: Vector[] = Vector.perpendicularTo(this.barrelStart, this.barrelEnd);
+            let perpendicularPoints: Vector[] = Vector.perpendicularTo(this.barrelStart, this.barrelEnd, 8);
             let left: Vector = perpendicularPoints[0];
             let right: Vector = perpendicularPoints[1];
 
