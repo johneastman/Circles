@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { TurretMode } from './TurretMode';
+import { TurretMode } from '../../components/turret_mode/TurretMode';
 
 test("render turret mode", () => {
   render(<TurretMode />);

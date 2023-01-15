@@ -51,3 +51,5 @@ All source files are in the `src` directory.
 * `src/sprites`: anything that is displayed on the canvas
 * `src/components`: React components
 * `src/game`: miscellaneous TypeScript logic code
+
+Tests are located in the `test` directory.

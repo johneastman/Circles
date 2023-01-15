@@ -21,7 +21,7 @@ export function getCurrentTime(): number {
 // Return a random floating-point number within a specified range.
 // Inclusive of min; inclusive of max.
 export function getRandomFloat(min: number, max: number): number {
-    return Math.random() * (max - min + 1) + min;
+    return Math.random() * (max - min) + min;
 }
 
 // Return a random integer within a specified range.

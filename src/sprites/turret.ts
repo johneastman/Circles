@@ -49,24 +49,9 @@ export class Turret implements Sprite {
         bullets.push(bullet);
 
         if (turretMode === Mode.MANY) {
-            /*
-            Calculate third point of right triangle with 2 points and a known distance:
-            https://math.stackexchange.com/a/2126315
-            */
-            let x1: number = this.barrelStart.x;
-            let x2: number = this.barrelEnd.x;
-    
-            let y1: number = this.barrelStart.y;
-            let y2: number = this.barrelEnd.y;
-    
-            let L: number = this.barrelStart.distance(this.barrelEnd);
-            let c: number = 8;
-    
-            let xOffset: number = (c * (y1 - y2)) / L;
-            let yOffset: number = (c * (x2 - x1)) / L;
-    
-            let left: Vector = new Vector(x2 + xOffset, y2 + yOffset);
-            let right: Vector = new Vector(x2 - xOffset, y2 - yOffset);
+            let perpendicularPoints: Vector[] = Vector.perpendicularTo(this.barrelStart, this.barrelEnd);
+            let left: Vector = perpendicularPoints[0];
+            let right: Vector = perpendicularPoints[1];
 
             bullets.push(new Bullet(app, this.barrelStart, left));
             bullets.push(new Bullet(app, this.barrelStart, right));

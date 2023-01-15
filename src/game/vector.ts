@@ -28,6 +28,31 @@ export class Vector {
     static div(vector: Vector, scalar: number): Vector {
         return new Vector(vector.x / scalar, vector.y / scalar);
     }
+
+    /*
+    Given a line, return two Vectors offset on either side of a point on that line. 
+
+    Calculate third point of right triangle with 2 points and a known distance:
+    https://math.stackexchange.com/a/2126315
+    */
+    static perpendicularTo(lineStart: Vector, lineEnd: Vector): Vector[] {
+        let x1: number = lineStart.x;
+        let x2: number = lineEnd.x;
+
+        let y1: number = lineStart.y;
+        let y2: number = lineEnd.y;
+
+        let L: number = lineStart.distance(lineEnd);
+        let c: number = 8; // distance from given point
+
+        let xOffset: number = (c * (y1 - y2)) / L;
+        let yOffset: number = (c * (x2 - x1)) / L;
+
+        return [
+            new Vector(x2 + xOffset, y2 + yOffset), // positive offset
+            new Vector(x2 - xOffset, y2 - yOffset)  // negative offset
+        ]
+    }
     
     /*
     Given two vectors and a length, return a new vector 'length' units from 'first'. 'second' is used to
