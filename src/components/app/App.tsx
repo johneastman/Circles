@@ -9,6 +9,7 @@ import { Color } from "../../game/color";
 import Canvas from '../canvas/Canvas';
 import { HighScores } from "../highScores/HighScores";
 import { TurretMode } from "../turret_mode/TurretMode";
+import { Text } from "../../sprites/text";
 
 interface AppState {
     score: number;
@@ -101,6 +102,25 @@ class App extends React.Component<{}, AppState> {
 
             // Pause the game so the score is not continually added to the high-score board
             this.setState({isPaused: true});
+
+            // Draw the game-over display on the canvas
+            let canvas: Canvas = this.canvasRef.current!;
+
+            let gameOverText: Text = new Text(
+                "Game Over",
+                canvas.props.width / 2,
+                (canvas.props.height / 2) - 10
+            );
+            canvas.draw(gameOverText);
+
+            let scoreText: Text = new Text(
+                `Score: ${this.state.score}`,
+                canvas.props.width / 2,
+                (canvas.props.height / 2) + 33,
+                undefined,
+                35
+            );
+            canvas.draw(scoreText);
         }
     }
 
