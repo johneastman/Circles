@@ -1,4 +1,3 @@
-import { isContext } from "vm";
 import { Sprite } from "./sprite";
 
 export class Text implements Sprite {
