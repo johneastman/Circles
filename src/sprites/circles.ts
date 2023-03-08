@@ -113,15 +113,15 @@ export class Circle implements Sprite {
         this.vel = Vector.add(thisFinalNormal, thisFinalTan);
         other.vel = Vector.add(otherFinalNormal, otherFinalTan);
     }
-    
-    /*
-    Update the position of objects on the canvas. Furthermore, 
-    updating the position to the edge of the canvas upon 
-    collision ensures that objects do not get stuck on the edges 
-    of the canvas or pushed through by other objects.
-    
-    Multiplying velocity components by -1 changes the direction.
-    */
+
+    /**
+     * Check if circle is at the edge of the canvas and update the velocity so the circles moves in the
+     * opposite direction.
+     *  
+     * Unlike with bullets--where we check if the bullet is beyond the bounds of the canvas so it appears
+     * to fly off the canvas--we need to check if the circle is at the edge of the canvas so it appears
+     * to bounces off the edge.
+     */
     checkEdges(): void {
         
         // Right side of canvas
@@ -231,8 +231,13 @@ export class Bullet extends Circle {
         );    
     }
 
+    /**
+     * Check if a bullet is off the bounds of the screen, and remove it from the list of bullets if it is. Note that
+     * unlike circles--where we need to check if the circle is at the edge of the canvas so it appears to bounces
+     * off the edge--we want to check if the bullet is beyond the bounds of the canvas so it appears to fly off the
+     * screen.
+     */
     checkEdges(): void {
-        // Remove bullets when off the bounds of the canvas.
         if (this.pos.x + this.radius < 0 || this.pos.x - this.radius > this.canvasWidth ||
             this.pos.y + this.radius < 0 || this.pos.y - this.radius > this.canvasHeight) {
             this.app.removeBullet(this);
