@@ -14,6 +14,7 @@ import { Text } from "../../sprites/text";
 interface AppState {
     score: number;
     circles: Circle[];
+    bullets: Bullet[];
     turret: Turret;
     isPaused: boolean; // for pausing/unpausing the game
 }
@@ -37,6 +38,7 @@ class App extends React.Component<{}, AppState> {
         this.state = {
             score: 0,
             circles: this.createCircles(),
+            bullets: [],
             turret: new Turret(
                 new Vector(this.canvasWidth / 2, this.canvasHeight)
             ),
@@ -105,6 +107,7 @@ class App extends React.Component<{}, AppState> {
 
             // Draw the game-over display on the canvas
             let canvas: Canvas = this.canvasRef.current!;
+            canvas.clear();
 
             let gameOverText: Text = new Text(
                 "Game Over",
@@ -137,18 +140,15 @@ class App extends React.Component<{}, AppState> {
     // Fire a bullet when the user clicks on the canvas
     fireBullet(_: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void {
         let turret: Turret = this.state.turret;
-
         let bullets: Bullet[] = turret.getBullets(this, this.turretModeRef.current?.state.mode!);
-        
-        let circles: Circle[] = this.state.circles;
-        circles = circles.concat(bullets);
-        this.setState({circles: circles});
+        this.setState({bullets: this.state.bullets.concat(bullets)});
     }
 
     resetGame(_: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
         this.setState({
             score: 0,
             circles: this.createCircles(),
+            bullets: [],
             isPaused: false
         });
     }
@@ -163,7 +163,7 @@ class App extends React.Component<{}, AppState> {
             if (canvas != null && canvas.state != null) {
                 canvas.clear();
     
-                let circles: Circle[] = this.state.circles;
+                let circles: Circle[] = this.state.circles.concat(this.state.bullets);
                 for (let i = 0; i < circles.length; i++) {
                     const current: Circle = circles[i];
     
@@ -206,6 +206,15 @@ class App extends React.Component<{}, AppState> {
         circles.splice(index, 1);
 
         this.setState({circles: circles});
+    }
+
+    removeBullet(bullet: Bullet): void {
+        let bullets: Bullet[] = this.state.bullets;
+
+        let index: number = bullets.indexOf(bullet);
+        bullets.splice(index, 1);
+
+        this.setState({bullets: bullets});
     }
 
     updateScore(bullet: Bullet): void {

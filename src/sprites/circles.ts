@@ -232,7 +232,7 @@ export class Bullet extends Circle {
         // Remove bullets when off the bounds of the canvas.
         if (this.pos.x + this.radius < 0 || this.pos.x - this.radius > this.canvasWidth ||
             this.pos.y + this.radius < 0 || this.pos.y - this.radius > this.canvasHeight) {
-            this.app.removeCircle(this);
+            this.app.removeBullet(this);
         }
     }
 
