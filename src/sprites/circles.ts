@@ -10,6 +10,7 @@ export class Circle implements Sprite {
     defaultColor: string;
     collisionColor: string;
     radius: number;
+    mass: number;
     pos: Vector;
     vel: Vector;
     acc: Vector;
@@ -19,7 +20,15 @@ export class Circle implements Sprite {
 
     colorOffset: number = 40;
 
-    constructor(app: App, x: number, y: number, radius: number, color: Color, velocity: Vector | undefined = undefined) {
+    constructor(
+        app: App,
+        x: number,
+        y: number,
+        radius: number,
+        mass: number,
+        color: Color,
+        velocity: Vector | undefined = undefined) {
+        
         this.app = app;
         this.canvasWidth = app.canvasWidth;
         this.canvasHeight = app.canvasHeight;
@@ -32,10 +41,12 @@ export class Circle implements Sprite {
         this.collisionColor = color.rgbString(this.colorOffset)
         
         this.radius = radius;
+        this.mass = mass;
+        
         this.pos = new Vector(x, y);
 
         // Velocity is an optional parameter
-        this.vel = velocity === undefined ? new Vector(sign() * (1 / radius) * 10, sign() * (1 / radius) * 10) : velocity
+        this.vel = velocity || new Vector(sign() * (1 / radius) * 10, sign() * (1 / radius) * 10);
         
         this.acc = new Vector(0, 0);
 
@@ -74,8 +85,7 @@ export class Circle implements Sprite {
         const unitNormal: Vector = Vector.div(diffVec, distance);
         const unitTan: Vector = unitNormal.tan();
         
-        // Ensure that collided objects do not get stuck in 
-        // each other.
+        // Ensure that collided objects do not get stuck in each other.
         const correction: Vector = Vector.mul(unitNormal, this.radius + other.radius);
         this.pos = Vector.add(other.pos, correction);
         
@@ -85,10 +95,11 @@ export class Circle implements Sprite {
         const thisTan: number = this.vel.dot(unitTan);
         const otherTan: number = other.vel.dot(unitTan);
         
-        const thisScalarVelocity: number = (thisNormal * (this.radius - other.radius) + 
-            2 * other.radius * otherNormal) / (this.radius + other.radius);
-        const otherScalarVelocity: number = (otherNormal * (other.radius - this.radius) + 
-            2 * this.radius * thisNormal) / (this.radius + other.radius);
+        const thisScalarVelocity: number = (thisNormal * (this.mass - other.mass) + 
+            2 * other.mass * otherNormal) / (this.mass + other.mass);
+        
+        const otherScalarVelocity: number = (otherNormal * (other.mass - this.mass) + 
+            2 * this.mass * thisNormal) / (this.mass + other.mass);
         
         const thisFinalNormal: Vector = Vector.mul(unitNormal, thisScalarVelocity);
         const otherFinalNormal: Vector = Vector.mul(unitNormal, otherScalarVelocity);
@@ -180,7 +191,7 @@ export class TargetCircle extends Circle {
         let x: number = getRandomFloat(radius, app.canvasWidth - radius);
         let y: number = getRandomFloat(radius, app.canvasHeight - radius);
         
-        super(app, x, y, radius, color);
+        super(app, x, y, radius, radius, color);
     }
 }
 
@@ -210,6 +221,7 @@ export class Bullet extends Circle {
             app,
             endPos.x,
             endPos.y,
+            5,
             5,
             new Color(244, 229, 65),
             vel
