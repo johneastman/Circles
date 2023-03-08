@@ -57,30 +57,33 @@ export class Circle implements Sprite {
         // color will not be active when the app starts.
         this.startTime = getCurrentTime() - this.collisionColorTimeActive;
     }
-    
-    /*
-    Check for collision between objects and handle resulting velocities.
 
-    Collision logic source: https://github.com/adiman9/pureJSCollisions/blob/master/index.js
-    Accompanying Tutorial: https://www.youtube.com/watch?v=XD-7anXSOp0
-    */
-    checkCollision(other: Circle): boolean {
-        if (this !== other) { // Do not check collision with self.
-            const v: Vector = Vector.sub(this.pos, other.pos);
-            const distance: number = v.magnitude();
-            
-            if (distance <= this.radius + other.radius) {
-                this.collisionUpdate(other, v, distance);    
-                return true;
-            }
-        }
-        return false;
+    /**
+     * Check if two circle objects have collided. If the distance between the two circles' centers is less
+     * than or equal to the sum of the radii, the circles have collided.
+     * 
+     * @param other another Circle instance
+     * @returns boolean. True if the two circles have collided; false otherwise.
+     */
+    collidedWith(other: Circle): boolean {
+        return this !== other && this.pos.distance(other.pos) <= this.radius + other.radius;
     }
 
-    // Update velocities after two circles collide
-    collisionUpdate(other: Circle, diffVec: Vector, distance: number): void {
+
+    /**
+     * Update circles' velocities after a collision has occurred ("collidedWith" checks if the circles have collided.)
+     *  
+     * Collision logic source: https://github.com/adiman9/pureJSCollisions/blob/master/index.js
+     * Accompanying Tutorial: https://www.youtube.com/watch?v=XD-7anXSOp0
+     * 
+     * @param other another Circle object
+     */
+    collisionUpdate(other: Circle): void {
         this.startTime = getCurrentTime();
         other.startTime = getCurrentTime();
+
+        const diffVec: Vector = Vector.sub(this.pos, other.pos);
+        const distance: number = diffVec.magnitude();
         
         const unitNormal: Vector = Vector.div(diffVec, distance);
         const unitTan: Vector = unitNormal.tan();
@@ -236,16 +239,13 @@ export class Bullet extends Circle {
         }
     }
 
-    checkCollision(other: Circle): boolean {
-        // Calling the super implementation ensures the bullet changes velocity after hitting a target.
-        let isCollide: boolean = super.checkCollision(other);
-        
-        // Bullets will bounce off each other but not contribute to the player's score if they collide with one another.
-        if (isCollide && !(other instanceof Bullet)) {
+    collisionUpdate(other: Circle): void {
+        super.collisionUpdate(other); // Physics udates to bullet
+
+        if (!(other instanceof Bullet)) {
             this.scoreMultiplier += 1;
             this.app.updateScore(this);
             this.app.removeCircle(other);
         }
-        return isCollide;
     }
 }

@@ -175,7 +175,9 @@ class App extends React.Component<{}, AppState> {
                     const rest: Circle[] = circles.slice(i + 1);
     
                     for (let circle of rest) {
-                        circle.checkCollision(current);
+                        if (circle.collidedWith(current)) {
+                            circle.collisionUpdate(current);
+                        } 
                     }
     
                     current.checkEdges(); // Handle how circles respond at the edges of the canvas
