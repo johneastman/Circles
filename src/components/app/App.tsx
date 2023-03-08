@@ -56,7 +56,7 @@ class App extends React.Component<{}, AppState> {
                 <div className="menu">
                     <ul>
                         <li>Score: { this.state.score }</li>
-                        <li><button onClick={this.resetGame.bind(this)}>Reset Game</button></li>
+                        <li><button onClick={this.resetGame.bind(this)}>{ this.state.circles.length == 0 ? "Play Again" : "Reset Game" }</button></li>
                         <li>
                             <button
                                 /*
