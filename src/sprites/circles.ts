@@ -254,3 +254,30 @@ export class Bullet extends Circle {
         }
     }
 }
+
+export class SplitterBullet extends Bullet {
+    constructor(app: App, startPos: Vector, endPos: Vector) {
+        super(app, startPos, endPos);
+    }
+
+    collisionUpdate(other: Circle): void {
+
+        if (!(other instanceof Bullet)) {
+            this.app.removeBullet(this);
+            this.app.removeCircle(other);
+
+            this.scoreMultiplier += 1;
+            this.app.updateScore(this);
+
+            let perpendicularPoints: Vector[] = Vector.perpendicularTo(this.pos, other.pos, other.radius);
+            let acrossPoint = Vector.sub(other.pos, Vector.sub(this.pos, other.pos));
+
+            this.app.addBullets([
+                new Bullet(this.app, other.pos, acrossPoint),
+                new Bullet(this.app, other.pos, this.pos),
+                new Bullet(this.app, other.pos, perpendicularPoints[0]),
+                new Bullet(this.app, other.pos, perpendicularPoints[1]),
+            ])
+        }
+    }
+}

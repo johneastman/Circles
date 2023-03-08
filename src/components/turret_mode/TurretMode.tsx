@@ -4,10 +4,12 @@ import "./TurretMode.css"
 export class Mode {
     static DEFAULT: string = "Default";
     static MANY: string = "Many";
+    static SPLIT: string = "Split";
 
     static KEYBOARD_TO_MODE: Map<string, string> = new Map([
         ["1", this.DEFAULT],
-        ["2", this.MANY]
+        ["2", this.MANY],
+        ["3", this.SPLIT]
     ]);
 }
 

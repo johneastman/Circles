@@ -219,6 +219,10 @@ class App extends React.Component<{}, AppState> {
         this.setState({bullets: bullets});
     }
 
+    addBullets(newBullets: Bullet[]): void {
+        this.setState({bullets: this.state.bullets.concat(newBullets)});
+    }
+
     updateScore(bullet: Bullet): void {
         this.setState({score: this.state.score + bullet.scoreMultiplier});
     }

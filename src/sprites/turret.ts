@@ -1,5 +1,5 @@
 import App from "../components/app/App";
-import { Bullet } from "./circles";
+import { Bullet, SplitterBullet } from "./circles";
 import { Sprite } from "./sprite";
 import { Vector } from "../game/vector";
 import { Mode } from "../components/turret_mode/TurretMode";
@@ -43,18 +43,24 @@ export class Turret implements Sprite {
     }
 
     getBullets(app: App, turretMode: Mode): Bullet[] {
-        let bullets: Bullet[] = [];
-
-        let bullet: Bullet = new Bullet(app, this.barrelStart, this.barrelEnd);
-        bullets.push(bullet);
+        let bullets: Bullet[];
 
         if (turretMode === Mode.MANY) {
             let perpendicularPoints: Vector[] = Vector.perpendicularTo(this.barrelStart, this.barrelEnd, 8);
             let left: Vector = perpendicularPoints[0];
             let right: Vector = perpendicularPoints[1];
 
-            bullets.push(new Bullet(app, this.barrelStart, left));
-            bullets.push(new Bullet(app, this.barrelStart, right));
+            bullets = [
+                new Bullet(app, this.barrelStart, this.barrelEnd),
+                new Bullet(app, this.barrelStart, left),
+                new Bullet(app, this.barrelStart, right)
+            ];
+        } else if (turretMode == Mode.SPLIT) {
+            // LOGIC here
+            bullets = [new SplitterBullet(app, this.barrelStart, this.barrelEnd)];
+        } else {
+            // Default bullet type
+            bullets = [new Bullet(app, this.barrelStart, this.barrelEnd)];
         }
         return bullets;
     }
