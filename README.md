@@ -1,6 +1,8 @@
 # Circles
 A simple browser game made with React and TypeScript where the user shoots circles moving around the screen. Here is a [demo video](https://user-images.githubusercontent.com/40542809/212783505-db7de565-3463-44db-bc40-6f1bd9c58adf.mov) of the game.
 
+The game can also be played [here](https://johneastman.github.io/circles/)!
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Setup
