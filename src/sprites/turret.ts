@@ -55,7 +55,7 @@ export class Turret implements Sprite {
                 new Bullet(app, this.barrelStart, left),
                 new Bullet(app, this.barrelStart, right)
             ];
-        } else if (turretMode == Mode.SPLIT) {
+        } else if (turretMode === Mode.SPLIT) {
             // LOGIC here
             bullets = [new SplitterBullet(app, this.barrelStart, this.barrelEnd)];
         } else {

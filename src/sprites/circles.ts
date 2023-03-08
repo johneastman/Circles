@@ -256,9 +256,6 @@ export class Bullet extends Circle {
 }
 
 export class SplitterBullet extends Bullet {
-    constructor(app: App, startPos: Vector, endPos: Vector) {
-        super(app, startPos, endPos);
-    }
 
     collisionUpdate(other: Circle): void {
 
