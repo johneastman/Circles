@@ -266,15 +266,12 @@ export class SplitterBullet extends Bullet {
             this.scoreMultiplier += 1;
             this.app.updateScore(this);
 
-            let perpendicularPoints: Vector[] = Vector.perpendicularTo(this.pos, other.pos, other.radius);
-            let acrossPoint = Vector.sub(other.pos, Vector.sub(this.pos, other.pos));
-
             this.app.addBullets([
-                new Bullet(this.app, other.pos, acrossPoint),
-                new Bullet(this.app, other.pos, this.pos),
-                new Bullet(this.app, other.pos, perpendicularPoints[0]),
-                new Bullet(this.app, other.pos, perpendicularPoints[1]),
-            ])
+                new Bullet(this.app, other.pos, new Vector(other.pos.x - other.radius, other.pos.y)),
+                new Bullet(this.app, other.pos, new Vector(other.pos.x + other.radius, other.pos.y)),
+                new Bullet(this.app, other.pos, new Vector(other.pos.x, other.pos.y - other.radius)),
+                new Bullet(this.app, other.pos, new Vector(other.pos.x, other.pos.y + other.radius)),
+            ]);
         }
     }
 }
