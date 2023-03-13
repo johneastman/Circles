@@ -206,9 +206,9 @@ export class Bullet extends Circle {
     Every time a bullet hits a target, increment this value by 1, and increment the player's score
     by this value. This rewards the player for hitting multiple targets with the same bullet.
     */
-    scoreMultiplier: number = 0
+    scoreMultiplier: number;
 
-    constructor(app: App, startPos: Vector, endPos: Vector) {
+    constructor(app: App, startPos: Vector, endPos: Vector, scoreMultiplier: number = 0) {
         /*
         Calculate the velocity of the bullet based on where the turret is pointing
         
@@ -228,7 +228,9 @@ export class Bullet extends Circle {
             5,
             new Color(244, 229, 65),
             vel
-        );    
+        );
+        
+        this.scoreMultiplier = scoreMultiplier;
     }
 
     /**
@@ -267,10 +269,10 @@ export class SplitterBullet extends Bullet {
             this.app.updateScore(this);
 
             this.app.addBullets([
-                new Bullet(this.app, other.pos, new Vector(other.pos.x - other.radius, other.pos.y)),
-                new Bullet(this.app, other.pos, new Vector(other.pos.x + other.radius, other.pos.y)),
-                new Bullet(this.app, other.pos, new Vector(other.pos.x, other.pos.y - other.radius)),
-                new Bullet(this.app, other.pos, new Vector(other.pos.x, other.pos.y + other.radius)),
+                new Bullet(this.app, other.pos, new Vector(other.pos.x - other.radius, other.pos.y), this.scoreMultiplier),
+                new Bullet(this.app, other.pos, new Vector(other.pos.x + other.radius, other.pos.y), this.scoreMultiplier),
+                new Bullet(this.app, other.pos, new Vector(other.pos.x, other.pos.y - other.radius), this.scoreMultiplier),
+                new Bullet(this.app, other.pos, new Vector(other.pos.x, other.pos.y + other.radius), this.scoreMultiplier),
             ]);
         }
     }
