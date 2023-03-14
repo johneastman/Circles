@@ -275,6 +275,8 @@ export class SplitterBullet extends Bullet {
             The starting points are the right-, top-, left-, and bottom-most positions on the circle (0, 90, 180, and 270
             degrees, respectively). Then, an offset value between 0 and 90 is randomly generated and added to those
             initial values. The resulting angles are used to generate 4 points on the circle's circumference.
+
+            Circle angles: https://i.stack.imgur.com/5zOW8.gif
             */
             let baseAngles: number[] = [0, 90, 180, 270];
 
