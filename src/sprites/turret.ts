@@ -45,22 +45,24 @@ export class Turret implements Sprite {
     getBullets(app: App, turretMode: Mode): Bullet[] {
         let bullets: Bullet[];
 
-        if (turretMode === Mode.MANY) {
-            let perpendicularPoints: Vector[] = Vector.perpendicularTo(this.barrelStart, this.barrelEnd, 8);
-            let left: Vector = perpendicularPoints[0];
-            let right: Vector = perpendicularPoints[1];
-
-            bullets = [
-                new Bullet(app, this.barrelStart, this.barrelEnd),
-                new Bullet(app, this.barrelStart, left),
-                new Bullet(app, this.barrelStart, right)
-            ];
-        } else if (turretMode === Mode.SPLIT) {
-            // LOGIC here
-            bullets = [new SplitterBullet(app, this.barrelStart, this.barrelEnd)];
-        } else {
-            // Default bullet type
-            bullets = [new Bullet(app, this.barrelStart, this.barrelEnd)];
+        switch (turretMode) {
+            case Mode.ARRAY:
+                let perpendicularPoints: Vector[] = Vector.perpendicularTo(this.barrelStart, this.barrelEnd, 8);
+                let left: Vector = perpendicularPoints[0];
+                let right: Vector = perpendicularPoints[1];
+    
+                bullets = [
+                    new Bullet(app, this.barrelStart, this.barrelEnd),
+                    new Bullet(app, this.barrelStart, left),
+                    new Bullet(app, this.barrelStart, right)
+                ];
+                break;
+            case Mode.BURST:
+                bullets = [new SplitterBullet(app, this.barrelStart, this.barrelEnd)];
+                break;
+            default:
+                bullets = [new Bullet(app, this.barrelStart, this.barrelEnd)];
+                break;
         }
         return bullets;
     }

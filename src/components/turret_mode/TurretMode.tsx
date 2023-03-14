@@ -3,13 +3,13 @@ import "./TurretMode.css"
 
 export class Mode {
     static DEFAULT: string = "Default";
-    static MANY: string = "Many";
-    static SPLIT: string = "Split";
+    static ARRAY: string = "Array";
+    static BURST: string = "Burst";
 
     static KEYBOARD_TO_MODE: Map<string, string> = new Map([
         ["1", this.DEFAULT],
-        ["2", this.MANY],
-        ["3", this.SPLIT]
+        ["2", this.ARRAY],
+        ["3", this.BURST]
     ]);
 }
 
