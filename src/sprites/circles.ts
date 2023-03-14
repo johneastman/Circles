@@ -1,6 +1,6 @@
 import { Color } from "../game/color";
 import { Vector } from "../game/vector";
-import { sign, getCurrentTime, getRandomFloat } from "../game/util"
+import { sign, getCurrentTime, getRandomFloat, getRandomInteger } from "../game/util"
 import App from "../components/app/App";
 import { Sprite } from "./sprite";
 
@@ -268,12 +268,27 @@ export class SplitterBullet extends Bullet {
             this.scoreMultiplier += 1;
             this.app.updateScore(this);
 
-            this.app.addBullets([
-                new Bullet(this.app, other.pos, new Vector(other.pos.x - other.radius, other.pos.y), this.scoreMultiplier),
-                new Bullet(this.app, other.pos, new Vector(other.pos.x + other.radius, other.pos.y), this.scoreMultiplier),
-                new Bullet(this.app, other.pos, new Vector(other.pos.x, other.pos.y - other.radius), this.scoreMultiplier),
-                new Bullet(this.app, other.pos, new Vector(other.pos.x, other.pos.y + other.radius), this.scoreMultiplier),
-            ]);
+            /*
+            Create 4 new bullets equidistant from one another around the circumference of the circle (i.e., a "T" shape
+            where each bullet is offset from the previous bullet by 90 degrees).
+
+            The starting points are the right-, top-, left-, and bottom-most positions on the circle (0, 90, 180, and 270
+            degrees, respectively). Then, an offset value between 0 and 90 is randomly generated and added to those
+            initial values. The resulting angles are used to generate 4 points on the circle's circumference.
+            */
+            let baseAngles: number[] = [0, 90, 180, 270];
+
+            // Offset cannot exceed 90 because 270 + 90 == 360.
+            let offset: number = getRandomInteger(0, 90);
+
+            let angles: number[] = baseAngles.map(a => a + offset);
+            this.app.addBullets(angles.map(angle => {
+                let newPosition: Vector = new Vector(
+                    other.radius * Math.sin(Math.PI * 2 * angle / 360),
+                    other.radius * Math.cos(Math.PI * 2 * angle / 360)
+                );
+                return new Bullet(this.app, other.pos, Vector.add(newPosition, other.pos), this.scoreMultiplier);
+            }));
         }
     }
 }
