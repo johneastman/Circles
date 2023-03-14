@@ -45,6 +45,11 @@ export class TurretMode extends React.Component<{}, TurretModeState> {
     }
 
     changeTurretMode(keyboardEvent: KeyboardEvent): void {
-        this.setState({mode: Mode.KEYBOARD_TO_MODE.get(keyboardEvent.key) || Mode.DEFAULT});
+        /*
+        If the user presses a key other than a turret mode, the turret mode will not change. This allows us to add
+        other keyboard events without impacting the turret mode (for example, pressing "p" to pause/unpause the game
+        also setting the turret mode back to default).
+        */
+        this.setState({mode: Mode.KEYBOARD_TO_MODE.get(keyboardEvent.key) || this.state.mode});
     }
 }

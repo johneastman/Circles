@@ -56,7 +56,7 @@ class App extends React.Component<{}, AppState> {
                 <div className="menu">
                     <ul>
                         <li>Score: { this.state.score }</li>
-                        <li><button onClick={this.resetGame.bind(this)}>{ this.state.circles.length === 0 ? "Play Again" : "Reset Game" }</button></li>
+                        <li><button onClick={this.resetGame.bind(this)}>(R) { this.state.circles.length === 0 ? "Play Again" : "Reset Game" }</button></li>
                         <li>
                             <button
                                 /*
@@ -68,7 +68,7 @@ class App extends React.Component<{}, AppState> {
                                 If the player wants to play another round, they'll have to click "Reset Game".
                                 */
                                 disabled={this.state.circles.length === 0}
-                                onClick={this.pauseGame.bind(this)}>{this.state.isPaused ? "Play" : "Pause"}
+                                onClick={this.pauseGameMouseEvent.bind(this)}>(P) {this.state.isPaused ? "Play" : "Pause"}
                             </button>
                         </li>
                     </ul>
@@ -95,6 +95,8 @@ class App extends React.Component<{}, AppState> {
     }
 
     componentDidMount() {
+        document.addEventListener("keydown", this.keyboardEvents.bind(this));
+
         this.mainLoop();
     }
 
@@ -127,6 +129,24 @@ class App extends React.Component<{}, AppState> {
         }
     }
 
+    keyboardEvents(keyboardEvent: KeyboardEvent): void {
+        keyboardEvent.stopImmediatePropagation();
+
+        switch (keyboardEvent.key.toLowerCase()) {
+            case "p":
+                this.setState({isPaused: !this.state.isPaused});
+                break;
+            case "r":
+                this.setState({
+                    score: 0,
+                    circles: this.createCircles(),
+                    bullets: [],
+                    isPaused: false
+                });
+                break;
+        }
+    }
+
     // Make the turret follow the player's mouse
     turretFollowMouse(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void {
         let rect: DOMRect = this.canvasRef.current!.getBoundingClientRect();
@@ -153,7 +173,7 @@ class App extends React.Component<{}, AppState> {
         });
     }
 
-    pauseGame(_: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+    pauseGameMouseEvent(_: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
         this.setState({isPaused: !this.state.isPaused});
     }
 
