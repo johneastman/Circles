@@ -56,7 +56,7 @@ class App extends React.Component<{}, AppState> {
                 <div className="menu">
                     <ul>
                         <li>Score: { this.state.score }</li>
-                        <li><button onClick={this.resetGame.bind(this)}>(R) { this.state.circles.length === 0 ? "Play Again" : "Reset Game" }</button></li>
+                        <li><button onClick={this.resetGameMouseEvent.bind(this)}>(R) { this.state.circles.length === 0 ? "Play Again" : "Reset Game" }</button></li>
                         <li>
                             <button
                                 /*
@@ -134,15 +134,10 @@ class App extends React.Component<{}, AppState> {
 
         switch (keyboardEvent.key.toLowerCase()) {
             case "p":
-                this.setState({isPaused: !this.state.isPaused});
+                this.pauseGame();
                 break;
             case "r":
-                this.setState({
-                    score: 0,
-                    circles: this.createCircles(),
-                    bullets: [],
-                    isPaused: false
-                });
+                this.resetGame();
                 break;
         }
     }
@@ -164,7 +159,11 @@ class App extends React.Component<{}, AppState> {
         this.setState({bullets: this.state.bullets.concat(bullets)});
     }
 
-    resetGame(_: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+    resetGameMouseEvent(_: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+        this.resetGame();
+    }
+
+    resetGame(): void {
         this.setState({
             score: 0,
             circles: this.createCircles(),
@@ -174,6 +173,10 @@ class App extends React.Component<{}, AppState> {
     }
 
     pauseGameMouseEvent(_: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+        this.pauseGame();
+    }
+
+    pauseGame(): void {
         this.setState({isPaused: !this.state.isPaused});
     }
 
