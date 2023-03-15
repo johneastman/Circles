@@ -17,21 +17,18 @@ interface TurretModeProps {
     mode: Mode;
 }
 
-export class TurretMode extends React.Component<TurretModeProps, {}> {
-
-    render(): JSX.Element {
-        let turretModeString: string = this.props.mode.toLocaleString();
+export function TurretMode(props: TurretModeProps): JSX.Element {
+    let turretModeString: string = props.mode.toLocaleString();
         
-        return (
-            <ul key="turretModes" className="turretMode" data-testid="turretModes">
-                {
-                    Array.from(Mode.KEYBOARD_TO_MODE).map((mode, index) => {
-                        let keyboardKey: string = mode[0];
-                        let modeName: string = mode[1];
-                        return <li key={index} style={modeName === turretModeString ? {fontWeight: "bold"} : {}}>{`${modeName} (${keyboardKey})`}</li>
-                    })
-                }
-            </ul>
-        )
-    }
+    return (
+        <ul key="turretModes" className="turretMode" data-testid="turretModes">
+            {
+                Array.from(Mode.KEYBOARD_TO_MODE).map((mode, index) => {
+                    let keyboardKey: string = mode[0];
+                    let modeName: string = mode[1];
+                    return <li key={index} style={modeName === turretModeString ? {fontWeight: "bold"} : {}}>{`${modeName} (${keyboardKey})`}</li>
+                })
+            }
+        </ul>
+    )
 }
