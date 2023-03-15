@@ -49,8 +49,6 @@ export class HighScores extends React.Component<HighScoresProps, HighScoresState
     }
 
     render(): JSX.Element {
-        // let scores: HighScore[] = this.state.scores;
-
         if (this.props.isEndGame()) {
             this.addScore(this.props.currentScore);
         }
