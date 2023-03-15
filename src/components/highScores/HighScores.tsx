@@ -27,6 +27,8 @@ class HighScore {
 
 interface HighScoresProps {
     numTopScores: number;
+    currentScore: number;
+    isEndGame: () => boolean;
 }
 
 interface HighScoresState {
@@ -47,13 +49,17 @@ export class HighScores extends React.Component<HighScoresProps, HighScoresState
     }
 
     render(): JSX.Element {
-        let scores: HighScore[] = this.state.scores;
-        
+        // let scores: HighScore[] = this.state.scores;
+
+        if (this.props.isEndGame()) {
+            this.addScore(this.props.currentScore);
+        }
+
         return (
             <div>
                 <strong>High Scores</strong> <button onClick={this.removeScores.bind(this)}>Clear</button>
-                {scores.length > 0
-                    ? scores.map((score, index) => <p key={index + 1}><strong>{index + 1}: </strong>{score.score} on {score.formatDate()}</p>)
+                {this.state.scores.length > 0
+                    ? this.state.scores.map((score, index) => <p key={index + 1}><strong>{index + 1}: </strong>{score.score} on {score.formatDate()}</p>)
                     : <p>No high scores</p>
                 }
             </div>

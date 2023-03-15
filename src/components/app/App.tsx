@@ -25,7 +25,6 @@ class App extends React.Component<{}, AppState> {
     canvasHeight: number;
     numCircles: number;
     canvasRef: React.RefObject<Canvas>;
-    highScoreRef: React.RefObject<HighScores>;
     turretModeRef: React.RefObject<TurretMode>;
 
     constructor(props: {}) {
@@ -46,7 +45,6 @@ class App extends React.Component<{}, AppState> {
         };
 
         this.canvasRef = React.createRef();
-        this.highScoreRef = React.createRef();
         this.turretModeRef = React.createRef();
     }
 
@@ -86,7 +84,12 @@ class App extends React.Component<{}, AppState> {
                     </div>
                     <div className="scoreBoardFloating">
                         <div className="scoreBoard">
-                            <HighScores ref={this.highScoreRef} numTopScores={3} />
+                            <HighScores 
+                                // ref={this.highScoreRef}
+                                numTopScores={3}
+                                currentScore={this.state.score}
+                                isEndGame={this.isEndGame.bind(this)}
+                            />
                         </div>
                     </div>
                 </div>
@@ -100,9 +103,13 @@ class App extends React.Component<{}, AppState> {
         this.mainLoop();
     }
 
+    isEndGame(): boolean {
+        return !this.state.isPaused && this.state.circles.length === 0;
+    }
+
     componentDidUpdate() {
-        if (!this.state.isPaused && this.state.circles.length === 0) {
-            this.highScoreRef.current?.addScore(this.state.score);
+        if (this.isEndGame()) {
+            // this.highScoreRef.current?.addScore(this.state.score);
 
             // Pause the game so the score is not continually added to the high-score board
             this.setState({isPaused: true});
