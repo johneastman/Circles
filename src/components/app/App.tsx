@@ -8,7 +8,7 @@ import { getRandomColor } from  "../../game/util";
 import { Color } from "../../game/color";
 import Canvas from '../canvas/Canvas';
 import { HighScores } from "../highScores/HighScores";
-import { TurretMode } from "../turret_mode/TurretMode";
+import { Mode, TurretMode } from "../turret_mode/TurretMode";
 import { Text } from "../../sprites/text";
 
 interface AppState {
@@ -17,6 +17,7 @@ interface AppState {
     bullets: Bullet[];
     turret: Turret;
     isPaused: boolean; // for pausing/unpausing the game
+    turretMode: Mode;
 }
 
 class App extends React.Component<{}, AppState> {
@@ -25,7 +26,6 @@ class App extends React.Component<{}, AppState> {
     canvasHeight: number;
     numCircles: number;
     canvasRef: React.RefObject<Canvas>;
-    turretModeRef: React.RefObject<TurretMode>;
 
     constructor(props: {}) {
         super(props);
@@ -41,11 +41,11 @@ class App extends React.Component<{}, AppState> {
             turret: new Turret(
                 new Vector(this.canvasWidth / 2, this.canvasHeight)
             ),
-            isPaused: false
+            isPaused: false,
+            turretMode: Mode.DEFAULT
         };
 
         this.canvasRef = React.createRef();
-        this.turretModeRef = React.createRef();
     }
 
     render(): JSX.Element {
@@ -80,12 +80,11 @@ class App extends React.Component<{}, AppState> {
                             onClick={this.fireBullet.bind(this)}
                             onMouseMove={this.turretFollowMouse.bind(this)}
                         />
-                        <TurretMode ref={this.turretModeRef} />
+                        <TurretMode mode={this.state.turretMode} />
                     </div>
                     <div className="scoreBoardFloating">
                         <div className="scoreBoard">
                             <HighScores 
-                                // ref={this.highScoreRef}
                                 numTopScores={3}
                                 currentScore={this.state.score}
                                 isEndGame={this.isEndGame.bind(this)}
@@ -146,6 +145,15 @@ class App extends React.Component<{}, AppState> {
             case "r":
                 this.resetGame();
                 break;
+            case "1":
+                this.setState({turretMode: Mode.DEFAULT});
+                break;
+            case "2":
+                this.setState({turretMode: Mode.ARRAY});
+                break;
+            case "3":
+                this.setState({turretMode: Mode.BURST});
+                break;
         }
     }
 
@@ -162,7 +170,7 @@ class App extends React.Component<{}, AppState> {
     // Fire a bullet when the user clicks on the canvas
     fireBullet(_: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void {
         let turret: Turret = this.state.turret;
-        let bullets: Bullet[] = turret.getBullets(this, this.turretModeRef.current?.state.mode!);
+        let bullets: Bullet[] = turret.getBullets(this, this.state.turretMode);
         this.setState({bullets: this.state.bullets.concat(bullets)});
     }
 

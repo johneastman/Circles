@@ -13,43 +13,25 @@ export class Mode {
     ]);
 }
 
-interface TurretModeState {
-    mode: string
+interface TurretModeProps {
+    mode: Mode;
 }
 
-export class TurretMode extends React.Component<{}, TurretModeState> {
-
-    constructor(props: {}) {
-        super(props);
-        this.state = {
-            mode: Mode.DEFAULT
-        };
-    }
-
-    componentDidMount(): void {
-        document.addEventListener("keydown", this.changeTurretMode.bind(this));
-    }
+export class TurretMode extends React.Component<TurretModeProps, {}> {
 
     render(): JSX.Element {
+        let turretModeString: string = this.props.mode.toLocaleString();
+        
         return (
             <ul key="turretModes" className="turretMode" data-testid="turretModes">
                 {
                     Array.from(Mode.KEYBOARD_TO_MODE).map((mode, index) => {
                         let keyboardKey: string = mode[0];
                         let modeName: string = mode[1];
-                        return <li key={index} style={modeName === this.state.mode ? {fontWeight: "bold"} : {}}>{`${modeName} (${keyboardKey})`}</li>
+                        return <li key={index} style={modeName === turretModeString ? {fontWeight: "bold"} : {}}>{`${modeName} (${keyboardKey})`}</li>
                     })
                 }
             </ul>
         )
-    }
-
-    changeTurretMode(keyboardEvent: KeyboardEvent): void {
-        /*
-        If the user presses a key other than a turret mode, the turret mode will not change. This allows us to add
-        other keyboard events without impacting the turret mode (for example, pressing "p" to pause/unpause the game
-        also setting the turret mode back to default).
-        */
-        this.setState({mode: Mode.KEYBOARD_TO_MODE.get(keyboardEvent.key) || this.state.mode});
     }
 }
