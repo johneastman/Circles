@@ -1,5 +1,5 @@
 import App from "../components/app/App";
-import { Bullet, SplitterBullet } from "./circles";
+import { BouncerBullet, Bullet, SplitterBullet } from "./circles";
 import { Sprite } from "./sprite";
 import { Vector } from "../game/vector";
 import { Mode } from "../components/turret_mode/TurretMode";
@@ -42,7 +42,7 @@ export class Turret implements Sprite {
         this.barrelEnd = Vector.distanceFrom(this.barrelStart, mousePosVector, this.turretLength)
     }
 
-    getBullets(app: App, turretMode: Mode): Bullet[] {
+    getBullets(app: App, turretMode: {key: string, displayName: string}): Bullet[] {
         let bullets: Bullet[];
 
         switch (turretMode) {
@@ -59,6 +59,9 @@ export class Turret implements Sprite {
                 break;
             case Mode.BURST:
                 bullets = [new SplitterBullet(app, this.barrelStart, this.barrelEnd)];
+                break;
+            case Mode.BOUNCE:
+                bullets = [new BouncerBullet(app, this.barrelStart, this.barrelEnd)];
                 break;
             default:
                 bullets = [new Bullet(app, this.barrelStart, this.barrelEnd)];

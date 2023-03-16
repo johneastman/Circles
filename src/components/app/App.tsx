@@ -17,7 +17,7 @@ interface AppState {
     bullets: Bullet[];
     turret: Turret;
     isPaused: boolean; // for pausing/unpausing the game
-    turretMode: Mode;
+    turretMode: {key: string, displayName: string};
 }
 
 class App extends React.Component<{}, AppState> {
@@ -144,13 +144,16 @@ class App extends React.Component<{}, AppState> {
             case "r":
                 this.resetGame();
                 break;
-            case "1":
+            case Mode.DEFAULT.key:
                 this.setState({turretMode: Mode.DEFAULT});
                 break;
-            case "2":
+            case Mode.BOUNCE.key:
+                this.setState({turretMode: Mode.BOUNCE});
+                break;
+            case Mode.ARRAY.key:
                 this.setState({turretMode: Mode.ARRAY});
                 break;
-            case "3":
+            case Mode.BURST.key:
                 this.setState({turretMode: Mode.BURST});
                 break;
         }

@@ -31,53 +31,37 @@ interface HighScoresProps {
     isEndGame: () => boolean;
 }
 
-interface HighScoresState {
-    scores: HighScore[];
-}
-
-export class HighScores extends React.Component<HighScoresProps, HighScoresState> {
+export class HighScores extends React.Component<HighScoresProps, {}> {
 
     localStorageKey: string;
     constructor(props: HighScoresProps) {
         super(props);
 
         this.localStorageKey = "highScores";
-        
-        this.state = {
-            scores: this.getScores()
-        };
     }
 
     render(): JSX.Element {
+        let highScores: HighScore[] = this.getScores();
+
         if (this.props.isEndGame()) {
-            this.addScore(this.props.currentScore);
+            highScores = highScores
+                .concat(new HighScore(this.props.currentScore))
+                .sort((first, second) => first.score - second.score)
+                .reverse()
+                .slice(0, this.props.numTopScores);  // Only store in memory the top "this.props.numTopScores" scores.
+            
+            this.saveScores(highScores);
         }
 
         return (
             <div>
                 <strong>High Scores</strong> <button onClick={this.removeScores.bind(this)}>Clear</button>
-                {this.state.scores.length > 0
-                    ? this.state.scores.map((score, index) => <p key={index + 1}><strong>{index + 1}: </strong>{score.score} on {score.formatDate()}</p>)
+                {highScores.length > 0
+                    ? highScores.map((score, index) => <p key={index + 1}><strong>{index + 1}: </strong>{score.score} on {score.formatDate()}</p>)
                     : <p>No high scores</p>
                 }
             </div>
         );
-    }
-
-    addScore(score: number): void {
-        let scores: HighScore[] = this.state.scores;
-
-        let newScore: HighScore = new HighScore(score);
-        scores.push(newScore);
-
-        // Only store in memory the top "this.props.numTopScores" scores.
-        let topScores: HighScore[] = scores
-            .sort((first, second) => first.score - second.score)
-            .reverse()
-            .slice(0, this.props.numTopScores);
-        
-        this.setState({scores: topScores});
-        this.saveScores(topScores);
     }
 
     private removeScores(): void {

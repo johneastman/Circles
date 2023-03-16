@@ -122,13 +122,14 @@ export class Circle implements Sprite {
      * to fly off the canvas--we need to check if the circle is at the edge of the canvas so it appears
      * to bounces off the edge.
      */
-    checkEdges(): void {
+    checkEdges(): boolean {
         
         // Right side of canvas
         if (this.pos.x + this.radius >= this.canvasWidth) {
             this.startTime = getCurrentTime();
             this.pos.x = this.canvasWidth - this.radius;
             this.vel.x *= -1;
+            return true;
         }
         
         // Left side of canvas
@@ -136,13 +137,15 @@ export class Circle implements Sprite {
             this.startTime = getCurrentTime();
             this.pos.x = this.radius;
             this.vel.x *= -1;
+            return true;
         }
-        
+
         // Bottom of canvas
         if (this.pos.y + this.radius >= this.canvasHeight) {
             this.startTime = getCurrentTime();
             this.pos.y = this.canvasHeight - this.radius;
             this.vel.y *= -1;
+            return true;
         }
         
         // Top of canvas
@@ -150,7 +153,9 @@ export class Circle implements Sprite {
             this.startTime = getCurrentTime();
             this.pos.y = this.radius;
             this.vel.y *= -1;
+            return true;
         }
+        return false;
     }
     
     // Draw the circle on the canvas
@@ -207,8 +212,9 @@ export class Bullet extends Circle {
     by this value. This rewards the player for hitting multiple targets with the same bullet.
     */
     scoreMultiplier: number;
+    bounceCounter: number;
 
-    constructor(app: App, startPos: Vector, endPos: Vector, scoreMultiplier: number = 0) {
+    constructor(app: App, startPos: Vector, endPos: Vector, scoreMultiplier: number = 0, bounceCounter: number = 0) {
         /*
         Calculate the velocity of the bullet based on where the turret is pointing
         
@@ -231,6 +237,7 @@ export class Bullet extends Circle {
         );
         
         this.scoreMultiplier = scoreMultiplier;
+        this.bounceCounter = bounceCounter;
     }
 
     /**
@@ -239,11 +246,18 @@ export class Bullet extends Circle {
      * off the edge--we want to check if the bullet is beyond the bounds of the canvas so it appears to fly off the
      * screen.
      */
-    checkEdges(): void {
+    checkEdges(): boolean {
+        if (this.bounceCounter > 0 && super.checkEdges()) {
+            this.bounceCounter -= 1;
+            return true;
+        }
+
         if (this.pos.x + this.radius < 0 || this.pos.x - this.radius > this.canvasWidth ||
             this.pos.y + this.radius < 0 || this.pos.y - this.radius > this.canvasHeight) {
             this.app.removeBullet(this);
+            return true;
         }
+        return false;
     }
 
     collisionUpdate(other: Circle): void {
@@ -292,5 +306,11 @@ export class SplitterBullet extends Bullet {
                 return new Bullet(this.app, other.pos, Vector.add(newPosition, other.pos), this.scoreMultiplier);
             }));
         }
+    }
+}
+
+export class BouncerBullet extends Bullet {
+    constructor(app: App, startPos: Vector, endPos: Vector) {
+        super(app, startPos, endPos, 0, 3);
     }
 }
