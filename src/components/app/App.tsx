@@ -108,7 +108,6 @@ class App extends React.Component<{}, AppState> {
 
     componentDidUpdate() {
         if (this.isEndGame()) {
-            // this.highScoreRef.current?.addScore(this.state.score);
 
             // Pause the game so the score is not continually added to the high-score board
             this.setState({isPaused: true});
