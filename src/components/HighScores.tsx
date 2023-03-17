@@ -1,4 +1,5 @@
 import React from "react";
+import "./HighScores.css";
 
 class HighScore {
     score: number;
@@ -54,18 +55,24 @@ export class HighScores extends React.Component<HighScoresProps, {}> {
         }
 
         return (
-            <div>
-                <strong>High Scores</strong> <button onClick={this.removeScores.bind(this)}>Clear</button>
+            <>
+                <div className="highScoresMenu">
+                    <ul>
+                        <li><strong>High Scores</strong></li>
+                        <li><button onClick={this.removeScores.bind(this)}>Clear</button></li>
+                        <li><button onClick={this.downloadHighScores.bind(this)}>Export</button></li>
+                    </ul>
+                </div>
+
                 {highScores.length > 0
                     ? highScores.map((score, index) => <p key={index + 1}><strong>{index + 1}: </strong>{score.score} on {score.formatDate()}</p>)
                     : <p>No high scores</p>
                 }
-            </div>
+            </>
         );
     }
 
     private removeScores(): void {
-        this.setState({scores: []});
         localStorage.removeItem(this.localStorageKey);
     }
 
@@ -81,12 +88,22 @@ export class HighScores extends React.Component<HighScoresProps, {}> {
      * Check {@link localStorage} for high scores. If any high scores are found, parse the JSON data
      * into a list of {@link HighScore} objects.
      * 
-     * If no high scores are found in {@link localStorage}, an empty list is returned.
+     * If no high scores are found in {@link localStorage}, return an empty list.
      * 
      * @returns list of {@link HighScore} objects.
      */
     private getScores(): HighScore[] {
         let scoresData: string | null = localStorage.getItem(this.localStorageKey);
         return scoresData === null ? [] : (JSON.parse(scoresData) as {score: number, date: Date}[]).map(s => new HighScore(s.score, s.date));
+    }
+
+    private downloadHighScores(): void {
+        let scores: string = JSON.stringify(this.getScores());
+        const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(scores)}`;
+
+        const link = document.createElement("a");
+        link.href = jsonString;
+        link.download = "circles_high_scores.json";
+        link.click();
     }
 }
