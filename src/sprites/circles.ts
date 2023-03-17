@@ -27,7 +27,7 @@ export class Circle implements Sprite {
         radius: number,
         mass: number,
         color: Color,
-        velocity: Vector | undefined = undefined) {
+        velocity?: Vector) {
         
         this.app = app;
         this.canvasWidth = app.canvasWidth;
