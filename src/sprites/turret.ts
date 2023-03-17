@@ -1,5 +1,5 @@
 import App from "../components/app/App";
-import { BouncerBullet, Bullet, SplitterBullet } from "./circles";
+import { Bullet, SplitterBullet } from "./circles";
 import { Sprite } from "./sprite";
 import { Vector } from "../game/vector";
 import { Mode } from "../components/turret_mode/TurretMode";
@@ -61,7 +61,7 @@ export class Turret implements Sprite {
                 bullets = [new SplitterBullet(app, this.barrelStart, this.barrelEnd)];
                 break;
             case Mode.BOUNCE:
-                bullets = [new BouncerBullet(app, this.barrelStart, this.barrelEnd)];
+                bullets = [new Bullet(app, this.barrelStart, this.barrelEnd, 0, 3)];
                 break;
             default:
                 bullets = [new Bullet(app, this.barrelStart, this.barrelEnd)];

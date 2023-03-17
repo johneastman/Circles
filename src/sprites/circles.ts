@@ -4,7 +4,7 @@ import { sign, getCurrentTime, getRandomFloat, getRandomInteger } from "../game/
 import App from "../components/app/App";
 import { Sprite } from "./sprite";
 
-export class Circle implements Sprite {
+export abstract class Circle implements Sprite {
     canvasWidth: number;
     canvasHeight: number;
     defaultColor: string;
@@ -263,7 +263,7 @@ export class Bullet extends Circle {
     collisionUpdate(other: Circle): void {
         super.collisionUpdate(other); // Physics udates to bullet
 
-        if (!(other instanceof Bullet)) {
+        if (other instanceof TargetCircle) {
             this.scoreMultiplier += 1;
             this.app.updateScore(this);
             this.app.removeCircle(other);
@@ -275,7 +275,7 @@ export class SplitterBullet extends Bullet {
 
     collisionUpdate(other: Circle): void {
 
-        if (!(other instanceof Bullet)) {
+        if (other instanceof TargetCircle) {
             this.app.removeBullet(this);
             this.app.removeCircle(other);
 
@@ -306,11 +306,5 @@ export class SplitterBullet extends Bullet {
                 return new Bullet(this.app, other.pos, Vector.add(newPosition, other.pos), this.scoreMultiplier);
             }));
         }
-    }
-}
-
-export class BouncerBullet extends Bullet {
-    constructor(app: App, startPos: Vector, endPos: Vector) {
-        super(app, startPos, endPos, 0, 3);
     }
 }
