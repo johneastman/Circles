@@ -1,8 +1,8 @@
-import App from "../components/app/App";
+import App from "../components/App";
 import { Bullet, SplitterBullet } from "./circles";
 import { Sprite } from "./sprite";
 import { Vector } from "../game/vector";
-import { Mode } from "../components/turret_mode/TurretMode";
+import { Mode } from "../components/TurretMode";
 
 export class Turret implements Sprite {
     radius: number = 20;

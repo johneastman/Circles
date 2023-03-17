@@ -1,15 +1,15 @@
 import React from "react";
 
 import "./App.css";
-import { Circle, TargetCircle, Bullet } from "../../sprites/circles";
-import { Vector } from "../../game/vector";
-import { Turret } from "../../sprites/turret";
-import { getRandomColor } from  "../../game/util";
-import { Color } from "../../game/color";
-import Canvas from '../canvas/Canvas';
-import { HighScores } from "../highScores/HighScores";
-import { Mode, TurretMode } from "../turret_mode/TurretMode";
-import { Text } from "../../sprites/text";
+import { Circle, TargetCircle, Bullet } from "../sprites/circles";
+import { Vector } from "../game/vector";
+import { Turret } from "../sprites/turret";
+import { getRandomColor } from  "../game/util";
+import { Color } from "../game/color";
+import Canvas from './Canvas';
+import { HighScores } from "./HighScores";
+import { Mode, TurretMode } from "./TurretMode";
+import { Text } from "../sprites/text";
 
 interface AppState {
     score: number;

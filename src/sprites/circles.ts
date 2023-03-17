@@ -1,7 +1,7 @@
 import { Color } from "../game/color";
 import { Vector } from "../game/vector";
 import { sign, getCurrentTime, getRandomFloat, getRandomInteger } from "../game/util"
-import App from "../components/app/App";
+import App from "../components/App";
 import { Sprite } from "./sprite";
 
 export abstract class Circle implements Sprite {
