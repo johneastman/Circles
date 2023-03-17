@@ -1,6 +1,6 @@
 import { Color } from "../game/color";
 import { Vector } from "../game/vector";
-import { sign, getCurrentTime, getRandomFloat, getRandomInteger } from "../game/util"
+import { sign, getCurrentTime, getRandomFloat, getRandomInteger, getRandomColor } from "../game/util"
 import App from "../components/App";
 import { Sprite } from "./sprite";
 
@@ -184,11 +184,10 @@ export abstract class Circle implements Sprite {
     }
 }
 
-
 // Create a circle with random parameters.
 export class TargetCircle extends Circle {
 
-    constructor(app: App, color: Color) {
+    constructor(app: App, color: Color, position?: Vector) {
         // Lower and upper bounds for circle sizes
         let radiusLowerBound: number = 10;
         let radiusUpperBound: number = 30;
@@ -196,13 +195,14 @@ export class TargetCircle extends Circle {
         let radius = getRandomFloat(radiusLowerBound, radiusUpperBound);
         
         // Ensure that circle never leaves bounds of canvas.
-        let x: number = getRandomFloat(radius, app.canvasWidth - radius);
-        let y: number = getRandomFloat(radius, app.canvasHeight - radius);
+        let x: number = position !== undefined ? position.x : getRandomFloat(radius, app.canvasWidth - radius);
+        let y: number = position !== undefined ? position.y : getRandomFloat(radius, app.canvasHeight - radius);
         
         super(app, x, y, radius, radius, color);
     }
 }
 
+export class SplitterCircle extends TargetCircle {}
 
 // Bullet object
 export class Bullet extends Circle {
@@ -263,7 +263,25 @@ export class Bullet extends Circle {
     collisionUpdate(other: Circle): void {
         super.collisionUpdate(other); // Physics udates to bullet
 
-        if (other instanceof TargetCircle) {
+        /**
+         * Need to check if {@link other} is an instance of {@link SplitterCircle} first because {@link SplitterCircle}
+         * inherits from {@link TargetCircle}. All {@link SplitterCircle} are instances of {@link TargetCircle},
+         * but not all {@link TargetCircle} are instances of {@link SplitterCircle}.
+         */
+        if (other instanceof SplitterCircle) {
+            this.app.removeCircle(other);
+
+            let angles: number[] = [getRandomInteger(0, 180), getRandomInteger(181, 359)];
+            this.app.addCircles(angles.map(angle => {
+                let newPosition: Vector = new Vector(
+                    other.radius * Math.sin(Math.PI * 2 * angle / 360),
+                    other.radius * Math.cos(Math.PI * 2 * angle / 360)
+                );
+                let position: Vector = Vector.add(newPosition, other.pos);
+                let color: Color = getRandomColor();
+                return new TargetCircle(this.app, color, position);
+            }));
+        } else if (other instanceof TargetCircle) {
             this.scoreMultiplier += 1;
             this.app.updateScore(this);
             this.app.removeCircle(other);
@@ -275,7 +293,7 @@ export class SplitterBullet extends Bullet {
 
     collisionUpdate(other: Circle): void {
 
-        if (other instanceof TargetCircle) {
+        if (other instanceof TargetCircle || other instanceof SplitterCircle) {
             this.app.removeBullet(this);
             this.app.removeCircle(other);
 
@@ -305,6 +323,8 @@ export class SplitterBullet extends Bullet {
                 );
                 return new Bullet(this.app, other.pos, Vector.add(newPosition, other.pos), this.scoreMultiplier);
             }));
+        } else {
+            super.collisionUpdate(other);
         }
     }
 }

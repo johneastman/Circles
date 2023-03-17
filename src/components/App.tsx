@@ -1,10 +1,10 @@
 import React from "react";
 
 import "./App.css";
-import { Circle, TargetCircle, Bullet } from "../sprites/circles";
+import { Circle, TargetCircle, Bullet, SplitterCircle } from "../sprites/circles";
 import { Vector } from "../game/vector";
 import { Turret } from "../sprites/turret";
-import { getRandomColor } from  "../game/util";
+import { getRandomColor, percentChance } from  "../game/util";
 import { Color } from "../game/color";
 import Canvas from './Canvas';
 import { HighScores } from "./HighScores";
@@ -239,10 +239,16 @@ class App extends React.Component<{}, AppState> {
         let circles: Circle[] = [];
         for (let i = 0; i < this.numCircles; i++) {
             let color: Color = getRandomColor();
-            let circle = new TargetCircle(this, color);
+
+            // 30 percent change the circle is a splitter circle
+            let circle: Circle = percentChance(0.3) ? new SplitterCircle(this, color) : new TargetCircle(this, color);
             circles.push(circle);
         }
         return circles;
+    }
+
+    addCircles(newCircles: Circle[]): void {
+        this.setState({circles: this.state.circles.concat(newCircles)});
     }
 
     removeCircle(circle: Circle): void {

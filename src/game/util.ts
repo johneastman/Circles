@@ -32,9 +32,13 @@ export function getRandomInteger(min: number, max: number): number {
 
 // Return positive or negative one.
 export function sign(): number {
-    return Math.random() < 0.5 ? -1 : 1;
+    return percentChance(0.5) ? -1 : 1;
 }
 
 export function getRandomColor() {
     return colors[getRandomInteger(0, colors.length)];
+}
+
+export function percentChance(percent: number): boolean {
+    return Math.random() < percent;
 }
