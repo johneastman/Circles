@@ -11,6 +11,7 @@ import { HighScores } from "./HighScores";
 import { Mode, TurretMode } from "./TurretMode";
 import { Footer } from "./Footer";
 import { Text } from "../sprites/text";
+import { Menu } from "./Menu";
 
 interface AppState {
     score: number;
@@ -52,49 +53,36 @@ class App extends React.Component<{}, AppState> {
     render(): JSX.Element {
         return (
             <>
-                <div className="container">
-                    <div className="menu">
-                        <ul>
-                            <li>Score: { this.state.score }</li>
-                            <li><button onClick={this.resetGameMouseEvent.bind(this)}>(R) { this.state.circles.length === 0 ? "Play Again" : "Reset Game" }</button></li>
-                            <li>
-                                <button
-                                    /*
-                                    The play/pause button needs to be disabled when the end-game state is reached because if
-                                    the user clicks play, the game will immediately unpause, but because there are no objects
-                                    in "this.state.circles", the game will immediately pause again and continually add the same
-                                    score to the high-score component.
+                <Menu
+                    score={this.state.score}
+                    isGamePaused={this.state.isPaused}
+                    numCircles={this.state.circles.length}
+                    resetGame={this.resetGameMouseEvent.bind(this)}
+                    pauseGame={this.pauseGameMouseEvent.bind(this)}
+                />
 
-                                    If the player wants to play another round, they'll have to click "Reset Game".
-                                    */
-                                    disabled={this.state.circles.length === 0}
-                                    onClick={this.pauseGameMouseEvent.bind(this)}>(P) {this.state.isPaused ? "Play" : "Pause"}
-                                </button>
-                            </li>
-                        </ul>
+                <div className="gameWrapper" /* Position div right of center div: http://jsfiddle.net/1Lrph45y/4/ */ >
+                    <div className="center">
+                        <Canvas
+                            ref={this.canvasRef}
+                            width={this.canvasWidth}
+                            height={this.canvasHeight}
+                            onClick={this.fireBullet.bind(this)}
+                            onMouseMove={this.turretFollowMouse.bind(this)}
+                        />
+                        <TurretMode mode={this.state.turretMode} />
                     </div>
-                    <div className="gameWrapper" /* Position div right of center div: http://jsfiddle.net/1Lrph45y/4/ */ >
-                        <div className="center">
-                            <Canvas
-                                ref={this.canvasRef}
-                                width={this.canvasWidth}
-                                height={this.canvasHeight}
-                                onClick={this.fireBullet.bind(this)}
-                                onMouseMove={this.turretFollowMouse.bind(this)}
+                    <div className="scoreBoardFloating">
+                        <div className="scoreBoard">
+                            <HighScores 
+                                numTopScores={3}
+                                currentScore={this.state.score}
+                                isEndGame={this.isEndGame.bind(this)}
                             />
-                            <TurretMode mode={this.state.turretMode} />
-                        </div>
-                        <div className="scoreBoardFloating">
-                            <div className="scoreBoard">
-                                <HighScores 
-                                    numTopScores={3}
-                                    currentScore={this.state.score}
-                                    isEndGame={this.isEndGame.bind(this)}
-                                />
-                            </div>
                         </div>
                     </div>
                 </div>
+
                 <Footer/>
             </>
         );
