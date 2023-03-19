@@ -187,12 +187,12 @@ export abstract class Circle implements Sprite {
 // Create a circle with random parameters.
 export class TargetCircle extends Circle {
 
-    constructor(app: App, color: Color, position?: Vector) {
+    constructor(app: App, color: Color, radius?: number, position?: Vector) {
         // Lower and upper bounds for circle sizes
         let radiusLowerBound: number = 10;
         let radiusUpperBound: number = 30;
 
-        let radius = getRandomFloat(radiusLowerBound, radiusUpperBound);
+        radius = radius || getRandomFloat(radiusLowerBound, radiusUpperBound);
         
         // Ensure that circle never leaves bounds of canvas.
         let x: number = position !== undefined ? position.x : getRandomFloat(radius, app.canvasWidth - radius);
@@ -202,9 +202,20 @@ export class TargetCircle extends Circle {
     }
 }
 
-export class SplitterCircle extends TargetCircle {}
+export class SplitterCircle extends Circle {
 
-// Bullet object
+    constructor(app: App, position?: Vector) {
+        let radius = 30;
+        let color: Color = new Color(215, 215, 215);
+        
+        // Ensure that circle never leaves bounds of canvas.
+        let x: number = position !== undefined ? position.x : getRandomFloat(radius, app.canvasWidth - radius);
+        let y: number = position !== undefined ? position.y : getRandomFloat(radius, app.canvasHeight - radius);
+        
+        super(app, x, y, radius, radius, color);
+    }
+}
+
 export class Bullet extends Circle {
 
     /*
@@ -271,7 +282,22 @@ export class Bullet extends Circle {
         if (other instanceof SplitterCircle) {
             this.app.removeCircle(other);
 
-            let angles: number[] = [getRandomInteger(0, 180), getRandomInteger(181, 359)];
+            /**
+             * Right of circle:  bullet x > circle x
+             * Left of circle:   bullet x < circle x
+             * Top of circle:    bullet y < circle y
+             * Bottom of circle: bullet y > circle y
+             */
+            let [min, max] = getOppositeAngleQuadrant(this, other);
+
+            // Create two new circles in the quadrant
+            let angles: number[] = [
+                getRandomInteger(min, max),
+                getRandomInteger(min, max)
+            ];
+
+            let newRadius: number = Math.floor(other.radius / 2);
+
             this.app.addCircles(angles.map(angle => {
                 let newPosition: Vector = new Vector(
                     other.radius * Math.sin(Math.PI * 2 * angle / 360),
@@ -279,7 +305,7 @@ export class Bullet extends Circle {
                 );
                 let position: Vector = Vector.add(newPosition, other.pos);
                 let color: Color = getRandomColor();
-                return new TargetCircle(this.app, color, position);
+                return new TargetCircle(this.app, color, newRadius, position);
             }));
         } else if (other instanceof TargetCircle) {
             this.scoreMultiplier += 1;
@@ -327,4 +353,31 @@ export class SplitterBullet extends Bullet {
             super.collisionUpdate(other);
         }
     }
+}
+
+/**
+ * Split the target circle into quadrants and determine in which quadrant the bullet
+ * hit the circle. Then, return the range of angles in the opposite quadrant.
+ * 
+ * @param bullet bullet instance that hit circle
+ * @param circle circle instance hit by bullet
+ * @returns range of angles in quadrant opposite to the one the bullet hit 
+ */
+function getOppositeAngleQuadrant(bullet: Bullet, circle: Circle): number[] {
+    let range: number[];
+    if (bullet.pos.x > circle.pos.x && bullet.pos.y < circle.pos.y) {
+        // angles 0 - 90 quadrant
+        range = [181, 270];
+    } else if (bullet.pos.x < circle.pos.x && bullet.pos.y < circle.pos.y) {
+        // angles 91 - 180 quadrant
+        range = [271, 359];
+    } else if (bullet.pos.x < circle.pos.x && bullet.pos.y > circle.pos.y) {
+        // angles 181 - 270 quadrant
+        range = [0, 90];
+    } else {
+        // bullet.pos.x > circle.pos.x && bullet.pos.y > circle.pos.y
+        // angles 271 - 359 quadrant
+        range = [91, 180];
+    }
+    return range;
 }
