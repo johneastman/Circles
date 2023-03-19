@@ -13,9 +13,10 @@ export function Menu(props: MenuProps): JSX.Element {
         <div className="menu">
             <ul>
                 <li>Score: { props.score }</li>
-                <li><button onClick={props.resetGame}>(R) { props.numCircles === 0 ? "Play Again" : "Reset Game" }</button></li>
+                <li><button className="button" onClick={props.resetGame}>(R) { props.numCircles === 0 ? "Play Again" : "Reset Game" }</button></li>
                 <li>
                     <button
+                        className="button"
                         /*
                         The play/pause button needs to be disabled when the end-game state is reached because if
                         the user clicks play, the game will immediately unpause, but because there are no objects

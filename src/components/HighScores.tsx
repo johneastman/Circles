@@ -59,14 +59,12 @@ export class HighScores extends React.Component<HighScoresProps, {}> {
                 <div className="highScoresMenu">
                     <strong>High Scores</strong>
                     <ul>
-                        <li><button onClick={this.removeScores.bind(this)}>Clear</button></li>
-                        <li><button onClick={this.downloadHighScores.bind(this)}>Export</button></li>
+                        <li><button className="button" onClick={this.removeScores.bind(this)}>Clear</button></li>
                         <li>
-                            <label>
-                                Import
-                                <input type="file" onChange={this.loadHighScores.bind(this)}/>
-                            </label>
+                            <button className="button" onClick={() => { document.getElementById("highScoreImport")?.click() }}>Upload</button>
+                            <input id="highScoreImport" type="file" hidden onChange={this.loadHighScores.bind(this)}/>
                         </li>
+                        <li><button className="button" onClick={this.downloadHighScores.bind(this)}>Download</button></li>
                     </ul>
                 </div>
 
