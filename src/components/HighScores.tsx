@@ -57,10 +57,16 @@ export class HighScores extends React.Component<HighScoresProps, {}> {
         return (
             <>
                 <div className="highScoresMenu">
+                    <strong>High Scores</strong>
                     <ul>
-                        <li><strong>High Scores</strong></li>
                         <li><button onClick={this.removeScores.bind(this)}>Clear</button></li>
                         <li><button onClick={this.downloadHighScores.bind(this)}>Export</button></li>
+                        <li>
+                            <label>
+                                Import
+                                <input type="file" onChange={this.loadHighScores.bind(this)}/>
+                            </label>
+                        </li>
                     </ul>
                 </div>
 
@@ -72,8 +78,13 @@ export class HighScores extends React.Component<HighScoresProps, {}> {
         );
     }
 
+    parseJSON(rawJSON: string): HighScore[] {
+        return (JSON.parse(rawJSON) as {score: number, date: Date}[]).map(s => new HighScore(s.score, s.date));
+    }
+
     private removeScores(): void {
         localStorage.removeItem(this.localStorageKey);
+        this.forceUpdate();
     }
 
     /**
@@ -94,7 +105,7 @@ export class HighScores extends React.Component<HighScoresProps, {}> {
      */
     private getScores(): HighScore[] {
         let scoresData: string | null = localStorage.getItem(this.localStorageKey);
-        return scoresData === null ? [] : (JSON.parse(scoresData) as {score: number, date: Date}[]).map(s => new HighScore(s.score, s.date));
+        return scoresData === null ? [] : this.parseJSON(scoresData);
     }
 
     private downloadHighScores(): void {
@@ -105,5 +116,28 @@ export class HighScores extends React.Component<HighScoresProps, {}> {
         link.href = jsonString;
         link.download = "circles_high_scores.json";
         link.click();
+    }
+
+    private loadHighScores(e: React.ChangeEvent<HTMLInputElement>): void {
+        let files: FileList | null = e.target.files;
+        if (files !== null) {
+            let file: File = files[0];
+
+            let fileReader: FileReader = new FileReader();
+            fileReader.readAsText(file);
+
+            fileReader.onload = () => {
+                let rawJSON: string = fileReader.result as string;
+                this.saveScores(this.parseJSON(rawJSON));
+            };
+
+            fileReader.onloadend = () => {
+                this.forceUpdate();
+            }
+
+            fileReader.onerror = () => {
+                alert(`unable to load file ${file.name}`);
+            };
+        }
     }
 }
