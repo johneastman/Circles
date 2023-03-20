@@ -1,23 +1,23 @@
 .gameWrapper {
-  text-align: center;
+    text-align: center;
 }
 
 .center {
-  display: inline-block;
+    display: inline-block;
 }
 
 .scoreBoardFloating {
-  position: relative;
-  display: inline-block;
-  width: 0;
-  height: 0;
-  vertical-align: top;
+    position: relative;
+    display: inline-block;
+    width: 0;
+    height: 0;
+    vertical-align: top;
 }
 
 .scoreBoard {
-  display: inline-block;
-  position: absolute;
-  width: 16rem;
-  text-align: left;
-  padding-left: 1rem;
+    display: inline-block;
+    position: absolute;
+    width: 20rem;
+    text-align: left;
+    padding-left: 1rem;
 }

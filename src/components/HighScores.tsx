@@ -1,4 +1,5 @@
 import React from "react";
+import { ordinal } from "../game/util";
 import "./HighScores.css";
 
 class HighScore {
@@ -11,18 +12,18 @@ class HighScore {
 
     formatDate(): string {
         let formattingOptions: {} = {
-            month: "short",
+            month: "long",
             day: "numeric",
             year: "numeric",
-            hour: "numeric",
-            minute: "numeric",
-            second: "numeric"
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
         };
         return this.date.toLocaleString("default", formattingOptions);
     }
 
     jsonify(): {score: string, date: string} {
-        return {score: this.score.toString(), date: this.formatDate()};
+        return {score: this.score.toString(), date: this.date.toString()};
     }
 }
 
@@ -68,16 +69,30 @@ export class HighScores extends React.Component<HighScoresProps, {}> {
                     </ul>
                 </div>
 
-                {highScores.length > 0
-                    ? highScores.map((score, index) => <p key={index + 1}><strong>{index + 1}: </strong>{score.score} on {score.formatDate()}</p>)
-                    : <p>No high scores</p>
+                {highScores.length === 0
+                    ? "No high scores"
+                    : <table>
+                        <tbody>
+                            {highScores.map((score, index) =>
+                                <tr key={index + 1}>
+                                    <td><strong>{ordinal(index + 1)}</strong></td>
+                                    <td>{score.score}</td>
+                                    <td>{score.formatDate()}</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
                 }
             </>
         );
     }
 
     parseJSON(rawJSON: string): HighScore[] {
-        return (JSON.parse(rawJSON) as {score: number, date: Date}[]).map(s => new HighScore(s.score, s.date));
+        return (JSON.parse(rawJSON) as {score: string, date: string}[]).map(s => {
+            let score: number = Number.parseInt(s.score);
+            let date: Date = new Date(s.date);
+            return new HighScore(score, date);
+        });
     }
 
     private removeScores(): void {

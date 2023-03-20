@@ -42,3 +42,22 @@ export function getRandomColor() {
 export function percentChance(percent: number): boolean {
     return Math.random() < percent;
 }
+
+export function ordinal(n: number): string {
+    let suffix: string;
+    if (n % 100 >= 11 && n % 100 <= 13) {
+        // If the number ends with the digits 11, 12, or 13, the suffix is "th" (11th, 12th, 13th, 111th, 112th, 113th, etc).
+        suffix = "th";
+    } else {
+        /**
+         * With the exception of 11, 12, and 13:
+         *   - Numbers that end in 0: "th" (e.g., 0th, 10th, 100th, 1000th, etc.)
+         *   - Numbers that end in 1: "st" (e.g., 1st, 101st, 1001st, etc.)
+         *   - Numbers that end in 2: "nd" (e.g., 2nd, 102nd, 1002nd, etc.)
+         *   - Numbers that end in 3: "rd" (e.g., 3rd, 103rd, 1003rd, etc.)
+         *   - Numbers that end in 4 - 9: "th" (e.g., 4th, 5th, 6th, 7th, 8th, 9th, 104th, 105th, etc.)
+         */
+        suffix = ['th', 'st', 'nd', 'rd', 'th'][Math.min(n % 10, 4)]
+    }
+    return `${n}${suffix}`;
+}

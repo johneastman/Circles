@@ -11,10 +11,15 @@
 
 .highScoresMenu li {
     padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
     padding-right: 0.25rem;
     display: inline-block;
 }
 
 .highScoreButtons {
     padding-bottom: 0.5rem;
+}
+
+td {
+    padding-right: 0.5rem;
 }

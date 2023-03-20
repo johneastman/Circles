@@ -1,5 +1,5 @@
 import { Color } from "../game/color";
-import { getRandomInteger, getRandomFloat, getRandomColor, sign, colors } from "../game/util";
+import { getRandomInteger, getRandomFloat, getRandomColor, sign, colors, ordinal } from "../game/util";
 
 test("get random integer", () => {
     let min: number = 0;
@@ -54,4 +54,23 @@ test("test when sign is positive", () => {
     expect(sign()).toEqual(1);
 
     jest.spyOn(Math, 'random').mockRestore();
+});
+
+test("ordinal number", () => {
+    expect(ordinal(0)).toEqual("0th");
+    expect(ordinal(1)).toEqual("1st");
+    expect(ordinal(2)).toEqual("2nd");
+    expect(ordinal(3)).toEqual("3rd");
+    expect(ordinal(4)).toEqual("4th");
+    expect(ordinal(5)).toEqual("5th");
+    expect(ordinal(6)).toEqual("6th");
+    expect(ordinal(7)).toEqual("7th");
+    expect(ordinal(8)).toEqual("8th");
+    expect(ordinal(9)).toEqual("9th");
+    expect(ordinal(10)).toEqual("10th");
+    expect(ordinal(11)).toEqual("11th");
+    expect(ordinal(12)).toEqual("12th");
+    expect(ordinal(13)).toEqual("13th");
+
+    expect(ordinal(1013)).toEqual("1013th");
 });
