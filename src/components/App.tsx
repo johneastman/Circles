@@ -3,12 +3,12 @@ import React from "react";
 import "./App.css";
 import { Circle, TargetCircle, Bullet, SplitterCircle } from "../sprites/circles";
 import { Vector } from "../game/vector";
-import { Turret } from "../sprites/turret";
+import { Turret, TurretMode } from "../sprites/turret";
 import { getRandomColor, percentChance } from  "../game/util";
 import { Color } from "../game/color";
 import Canvas from './Canvas';
 import { HighScores } from "./HighScores";
-import { Mode, TurretMode } from "./TurretMode";
+import { TurretModeComponent } from "./TurretMode";
 import { Footer } from "./Footer";
 import { Text } from "../sprites/text";
 import { Menu } from "./Menu";
@@ -19,7 +19,6 @@ interface AppState {
     bullets: Bullet[];
     turret: Turret;
     isPaused: boolean; // for pausing/unpausing the game
-    turretMode: {key: string, displayName: string};
 }
 
 class App extends React.Component<{}, AppState> {
@@ -43,8 +42,7 @@ class App extends React.Component<{}, AppState> {
             turret: new Turret(
                 new Vector(this.canvasWidth / 2, this.canvasHeight)
             ),
-            isPaused: false,
-            turretMode: Mode.DEFAULT
+            isPaused: false
         };
 
         this.canvasRef = React.createRef();
@@ -70,7 +68,7 @@ class App extends React.Component<{}, AppState> {
                             onClick={this.fireBullet.bind(this)}
                             onMouseMove={this.turretFollowMouse.bind(this)}
                         />
-                        <TurretMode mode={this.state.turretMode} />
+                        <TurretModeComponent mode={this.state.turret.turretMode} />
                     </div>
                     <div className="scoreBoardFloating">
                         <div className="scoreBoard">
@@ -129,6 +127,8 @@ class App extends React.Component<{}, AppState> {
     keyboardEvents(keyboardEvent: KeyboardEvent): void {
         keyboardEvent.stopImmediatePropagation();
 
+        let turret: Turret = this.state.turret;
+
         switch (keyboardEvent.key.toLowerCase()) {
             case "p":
                 this.pauseGame();
@@ -136,19 +136,21 @@ class App extends React.Component<{}, AppState> {
             case "r":
                 this.resetGame();
                 break;
-            case Mode.DEFAULT.key:
-                this.setState({turretMode: Mode.DEFAULT});
+            case TurretMode.DEFAULT.key:
+                turret.turretMode = TurretMode.DEFAULT;
+                // this.setState({turretMode: Mode.DEFAULT});
                 break;
-            case Mode.BOUNCE.key:
-                this.setState({turretMode: Mode.BOUNCE});
+            case TurretMode.BOUNCE.key:
+                turret.turretMode = TurretMode.BOUNCE;
                 break;
-            case Mode.ARRAY.key:
-                this.setState({turretMode: Mode.ARRAY});
+            case TurretMode.ARRAY.key:
+                turret.turretMode = TurretMode.ARRAY;
                 break;
-            case Mode.BURST.key:
-                this.setState({turretMode: Mode.BURST});
+            case TurretMode.BURST.key:
+                turret.turretMode = TurretMode.BURST;
                 break;
         }
+        this.setState({turret: turret});
     }
 
     // Make the turret follow the player's mouse
@@ -164,7 +166,7 @@ class App extends React.Component<{}, AppState> {
     // Fire a bullet when the user clicks on the canvas
     fireBullet(_: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void {
         let turret: Turret = this.state.turret;
-        let bullets: Bullet[] = turret.getBullets(this, this.state.turretMode);
+        let bullets: Bullet[] = turret.getBullets(this);
         this.setState({bullets: this.state.bullets.concat(bullets)});
     }
 
