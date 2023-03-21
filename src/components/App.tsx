@@ -12,6 +12,7 @@ import { TurretModeComponent } from "./TurretMode";
 import { Footer } from "./Footer";
 import { Text } from "../sprites/text";
 import { Menu } from "./Menu";
+import { Sprite } from "../sprites/sprite";
 
 interface AppState {
     score: number;
@@ -19,6 +20,7 @@ interface AppState {
     bullets: Bullet[];
     turret: Turret;
     isPaused: boolean; // for pausing/unpausing the game
+    sprites: Sprite[];
 }
 
 class App extends React.Component<{}, AppState> {
@@ -26,7 +28,6 @@ class App extends React.Component<{}, AppState> {
     canvasWidth: number;
     canvasHeight: number;
     numCircles: number;
-    canvasRef: React.RefObject<Canvas>;
 
     constructor(props: {}) {
         super(props);
@@ -42,10 +43,9 @@ class App extends React.Component<{}, AppState> {
             turret: new Turret(
                 new Vector(this.canvasWidth / 2, this.canvasHeight)
             ),
-            isPaused: false
+            isPaused: false,
+            sprites: []
         };
-
-        this.canvasRef = React.createRef();
     }
 
     render(): JSX.Element {
@@ -62,9 +62,9 @@ class App extends React.Component<{}, AppState> {
                 <div className="gameWrapper" /* Position div right of center div: http://jsfiddle.net/1Lrph45y/4/ */ >
                     <div className="center">
                         <Canvas
-                            ref={this.canvasRef}
                             width={this.canvasWidth}
                             height={this.canvasHeight}
+                            sprites={(this.state.circles as Sprite[]).concat(this.state.bullets as Sprite[]).concat([this.state.turret] as Sprite[]).concat(this.state.sprites)}
                             onClick={this.fireBullet.bind(this)}
                             onMouseMove={this.turretFollowMouse.bind(this)}
                         />
@@ -102,25 +102,22 @@ class App extends React.Component<{}, AppState> {
             // Pause the game so the score is not continually added to the high-score board
             this.setState({isPaused: true});
 
-            // Draw the game-over display on the canvas
-            let canvas: Canvas = this.canvasRef.current!;
-            canvas.clear();
-
+            // Display end-game text in canvas
             let gameOverText: Text = new Text(
                 "Game Over",
-                canvas.props.width / 2,
-                (canvas.props.height / 2) - 10
+                this.canvasWidth / 2,
+                (this.canvasHeight / 2) - 10
             );
-            canvas.draw(gameOverText);
 
             let scoreText: Text = new Text(
                 `Score: ${this.state.score}`,
-                canvas.props.width / 2,
-                (canvas.props.height / 2) + 33,
+                this.canvasWidth / 2,
+                (this.canvasHeight / 2) + 33,
                 undefined,
                 35
             );
-            canvas.draw(scoreText);
+
+            this.setState({sprites: [gameOverText, scoreText]});
         }
     }
 
@@ -155,7 +152,7 @@ class App extends React.Component<{}, AppState> {
 
     // Make the turret follow the player's mouse
     turretFollowMouse(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void {
-        let rect: DOMRect = this.canvasRef.current!.getBoundingClientRect();
+        let rect: DOMRect = (e.target as HTMLCanvasElement).getBoundingClientRect();
         let mouseVector: Vector = new Vector(e.clientX - rect.left, e.clientY - rect.top);
 
         let turret: Turret = this.state.turret;
@@ -174,12 +171,13 @@ class App extends React.Component<{}, AppState> {
         this.resetGame();
     }
 
-    resetGame(): void {
+    resetGame(): void {        
         this.setState({
             score: 0,
             circles: this.createCircles(),
             bullets: [],
-            isPaused: false
+            isPaused: false,
+            sprites: []
         });
     }
 
@@ -192,34 +190,25 @@ class App extends React.Component<{}, AppState> {
     }
 
     mainLoop() {
-        if (!this.state.isPaused) {
-            let canvas: Canvas | null = this.canvasRef.current;
-            if (canvas != null && canvas.state != null) {
-                canvas.clear();
-    
-                let circles: Circle[] = this.state.circles.concat(this.state.bullets);
-                for (let i = 0; i < circles.length; i++) {
-                    const current: Circle = circles[i];
-    
-                    /*
-                    Check collisions with the circles after the current circle in the array. Collisions with circles before the
-                    current circle in the array do not need to be checked due to the commutative property (e.g., if A collides
-                    with B, then B has, in a sense, collided with A).
-                    */
-                    const rest: Circle[] = circles.slice(i + 1);
-    
-                    for (let circle of rest) {
-                        if (circle.collidedWith(current)) {
-                            circle.collisionUpdate(current);
-                        } 
-                    }
-    
-                    current.checkEdges(); // Handle how circles respond at the edges of the canvas
-                    current.update();
-                    canvas.draw(current);
-                }
-                canvas.draw(this.state.turret);
+        let circles: Circle[] = this.state.circles.concat(this.state.bullets);
+        for (let i = 0; i < circles.length; i++) {
+            const current: Circle = circles[i];
+
+            /*
+            Check collisions with the circles after the current circle in the array. Collisions with circles before the
+            current circle in the array do not need to be checked due to the commutative property (e.g., if A collides
+            with B, then B has, in a sense, collided with A).
+            */
+            const rest: Circle[] = circles.slice(i + 1);
+
+            for (let circle of rest) {
+                if (circle.collidedWith(current)) {
+                    circle.collisionUpdate(current);
+                } 
             }
+
+            current.checkEdges(); // Handle how circles respond at the edges of the canvas
+            current.update();
         }
 
         requestAnimationFrame(this.mainLoop.bind(this));
