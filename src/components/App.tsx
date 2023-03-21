@@ -64,7 +64,7 @@ class App extends React.Component<{}, AppState> {
                         <Canvas
                             width={this.canvasWidth}
                             height={this.canvasHeight}
-                            sprites={(this.state.circles as Sprite[]).concat(this.state.bullets as Sprite[]).concat([this.state.turret] as Sprite[]).concat(this.state.sprites)}
+                            sprites={(this.state.circles as Sprite[]).concat(this.state.bullets).concat([this.state.turret]).concat(this.state.sprites)}
                             onClick={this.fireBullet.bind(this)}
                             onMouseMove={this.turretFollowMouse.bind(this)}
                         />
@@ -135,7 +135,6 @@ class App extends React.Component<{}, AppState> {
                 break;
             case TurretMode.DEFAULT.key:
                 turret.turretMode = TurretMode.DEFAULT;
-                // this.setState({turretMode: Mode.DEFAULT});
                 break;
             case TurretMode.BOUNCE.key:
                 turret.turretMode = TurretMode.BOUNCE;

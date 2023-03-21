@@ -34,6 +34,7 @@ class Canvas extends React.Component<CanvasProps, {}> {
     }
 
     componentDidMount(): void {
+        // constantly rerender the canvas so circles are always moving on the screen
         setInterval(() => { this.forceUpdate() }, 1);
     }
 
