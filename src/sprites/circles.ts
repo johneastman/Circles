@@ -123,7 +123,12 @@ export abstract class Circle implements Sprite {
      * to bounces off the edge.
      */
     checkEdges(): boolean {
-        
+
+        if (this.isOutsideBounds()) {
+            this.app.removeCircle(this);
+            return true;
+        }
+
         // Right side of canvas
         if (this.pos.x + this.radius >= this.canvasWidth) {
             this.startTime = getCurrentTime();
@@ -156,6 +161,16 @@ export abstract class Circle implements Sprite {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Check if a {@link Circle} object is outside the bounds of the canvas.
+     * 
+     * @returns true if {@link Circle} is outside the bounds of the canvas; false otherwise.
+     */
+    isOutsideBounds(): boolean {
+        return this.pos.x + this.radius < 0 || this.pos.x - this.radius > this.canvasWidth ||
+               this.pos.y + this.radius < 0 || this.pos.y - this.radius > this.canvasHeight
     }
     
     // Draw the circle on the canvas
@@ -263,11 +278,11 @@ export class Bullet extends Circle {
             return true;
         }
 
-        if (this.pos.x + this.radius < 0 || this.pos.x - this.radius > this.canvasWidth ||
-            this.pos.y + this.radius < 0 || this.pos.y - this.radius > this.canvasHeight) {
+        if (this.isOutsideBounds()) {
             this.app.removeBullet(this);
             return true;
         }
+
         return false;
     }
 
