@@ -218,8 +218,8 @@ class App extends React.Component<{}, AppState> {
         for (let i = 0; i < this.numCircles; i++) {
             let color: Color = getRandomColor();
 
-            // 30 percent change the circle is a splitter circle
-            let circle: Circle = percentChance(0.3) ? new SplitterCircle(this) : new TargetCircle(this, color);
+            // 15 percent change the circle is a splitter circle
+            let circle: Circle = percentChance(0.15) ? new SplitterCircle(this) : new TargetCircle(this, color);
             circles.push(circle);
         }
         return circles;

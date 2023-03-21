@@ -221,7 +221,7 @@ export class SplitterCircle extends Circle {
 
     constructor(app: App, position?: Vector) {
         let radius = 30;
-        let color: Color = new Color(215, 215, 215);
+        let color: Color = new Color(255, 130, 255);
         
         // Ensure that circle never leaves bounds of canvas.
         let x: number = position !== undefined ? position.x : getRandomFloat(radius, app.canvasWidth - radius);
