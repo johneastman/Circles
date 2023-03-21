@@ -56,7 +56,6 @@ class App extends React.Component<{}, AppState> {
                     isGamePaused={this.state.isPaused}
                     numCircles={this.state.circles.length}
                     resetGame={this.resetGameMouseEvent.bind(this)}
-                    pauseGame={this.pauseGameMouseEvent.bind(this)}
                 />
 
                 <div className="gameWrapper" /* Position div right of center div: http://jsfiddle.net/1Lrph45y/4/ */ >
@@ -127,9 +126,6 @@ class App extends React.Component<{}, AppState> {
         let turret: Turret = this.state.turret;
 
         switch (keyboardEvent.key.toLowerCase()) {
-            case "p":
-                this.pauseGame();
-                break;
             case "r":
                 this.resetGame();
                 break;
@@ -178,14 +174,6 @@ class App extends React.Component<{}, AppState> {
             isPaused: false,
             sprites: []
         });
-    }
-
-    pauseGameMouseEvent(_: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
-        this.pauseGame();
-    }
-
-    pauseGame(): void {
-        this.setState({isPaused: !this.state.isPaused});
     }
 
     mainLoop() {

@@ -8,7 +8,6 @@ test("render menu end-game state", () => {
             isGamePaused={true}
             numCircles={0} 
             resetGame={ () => {} }
-            pauseGame={ () => {} }
         />
     );
 
@@ -17,10 +16,6 @@ test("render menu end-game state", () => {
     const playAgainButton = screen.getByRole("button", {name: "(R) Play Again"});
     expect(playAgainButton).toBeInTheDocument();
     expect(playAgainButton).toBeEnabled();
-
-    const playPauseButton = screen.getByRole("button", {name: "(P) Play"});
-    expect(playPauseButton).toBeInTheDocument();
-    expect(playPauseButton).toBeDisabled();
 });
 
 test("render menu game-play state", () => {
@@ -30,7 +25,6 @@ test("render menu game-play state", () => {
             isGamePaused={false}
             numCircles={1}
             resetGame={ () => {} }
-            pauseGame={ () => {} }
         />
     );
 
@@ -39,8 +33,4 @@ test("render menu game-play state", () => {
     const playAgainButton = screen.getByRole("button", {name: "(R) Reset Game"});
     expect(playAgainButton).toBeInTheDocument();
     expect(playAgainButton).toBeEnabled();
-
-    const playPauseButton = screen.getByRole("button", {name: "(P) Pause"});
-    expect(playPauseButton).toBeInTheDocument();
-    expect(playPauseButton).toBeEnabled();
 });
