@@ -169,6 +169,11 @@ export abstract class Circle implements Sprite {
      * @returns true if {@link Circle} is outside the bounds of the canvas; false otherwise.
      */
     isOutsideBounds(): boolean {
+
+        if (Number.isNaN(this.pos.x) || Number.isNaN(this.pos.y)) {
+            return true;
+        }
+
         return this.pos.x + this.radius < 0 || this.pos.x - this.radius > this.canvasWidth ||
                this.pos.y + this.radius < 0 || this.pos.y - this.radius > this.canvasHeight
     }
