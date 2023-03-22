@@ -5,7 +5,6 @@ test("render menu end-game state", () => {
     render(
         <Menu 
             score={0}
-            isGamePaused={true}
             numCircles={0} 
             resetGame={ () => {} }
         />
@@ -22,7 +21,6 @@ test("render menu game-play state", () => {
     render(
         <Menu 
             score={5}
-            isGamePaused={false}
             numCircles={1}
             resetGame={ () => {} }
         />

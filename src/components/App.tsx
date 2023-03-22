@@ -19,7 +19,7 @@ interface AppState {
     circles: Circle[];
     bullets: Bullet[];
     turret: Turret;
-    isPaused: boolean; // for pausing/unpausing the game
+    isGameOver: boolean;  // to avoid infinite loops
     sprites: Sprite[];
 }
 
@@ -43,7 +43,7 @@ class App extends React.Component<{}, AppState> {
             turret: new Turret(
                 new Vector(this.canvasWidth / 2, this.canvasHeight)
             ),
-            isPaused: false,
+            isGameOver: false,
             sprites: []
         };
     }
@@ -53,7 +53,6 @@ class App extends React.Component<{}, AppState> {
             <>
                 <Menu
                     score={this.state.score}
-                    isGamePaused={this.state.isPaused}
                     numCircles={this.state.circles.length}
                     resetGame={this.resetGameMouseEvent.bind(this)}
                 />
@@ -92,14 +91,11 @@ class App extends React.Component<{}, AppState> {
     }
 
     isEndGame(): boolean {
-        return !this.state.isPaused && this.state.circles.length === 0;
+        return !this.state.isGameOver && this.state.circles.length === 0;
     }
 
     componentDidUpdate() {
         if (this.isEndGame()) {
-
-            // Pause the game so the score is not continually added to the high-score board
-            this.setState({isPaused: true});
 
             // Display end-game text in canvas
             let gameOverText: Text = new Text(
@@ -116,7 +112,8 @@ class App extends React.Component<{}, AppState> {
                 35
             );
 
-            this.setState({sprites: [gameOverText, scoreText]});
+            // Setting "isGameOVer" flag avoids infinite recursion with setting state and re-renders
+            this.setState({isGameOver: true, sprites: [gameOverText, scoreText]});
         }
     }
 
@@ -171,7 +168,7 @@ class App extends React.Component<{}, AppState> {
             score: 0,
             circles: this.createCircles(),
             bullets: [],
-            isPaused: false,
+            isGameOver: false,
             sprites: []
         });
     }

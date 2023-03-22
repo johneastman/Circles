@@ -2,7 +2,6 @@ import "./Menu.css";
 
 interface MenuProps {
     score: number;
-    isGamePaused: boolean;
     numCircles: number;
     resetGame: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
