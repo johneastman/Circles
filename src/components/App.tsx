@@ -36,6 +36,12 @@ class App extends React.Component<{}, AppState> {
         this.canvasHeight = 300;
         this.numCircles = 8;
 
+        /**
+         * Circles and bullets are in separate arrays to make checking the endgame state easier. This allows us
+         * to simply check if the list of circles is empty, meaning the player has shot all the circles.
+         * Otherwise, we'd have to loop through the array of combined circles and bullets and see if the list
+         * no longer contains any circle instances.
+         */
         this.state = {
             score: 0,
             circles: this.createCircles(),
@@ -44,11 +50,23 @@ class App extends React.Component<{}, AppState> {
                 new Vector(this.canvasWidth / 2, this.canvasHeight)
             ),
             isGameOver: false,
+
+            /**
+             * A global variable for additional sprites to be drawn on the canvas (anything other than circles,
+             * bullets, and the turret).
+             */
             sprites: []
         };
     }
 
     render(): JSX.Element {
+
+        // Combine all sprites into one list to be drawn on the canvas
+        let sprites: Sprite[] = (this.state.circles as Sprite[])
+            .concat(this.state.bullets)
+            .concat([this.state.turret])
+            .concat(this.state.sprites);
+
         return (
             <>
                 <Menu
@@ -62,7 +80,7 @@ class App extends React.Component<{}, AppState> {
                         <Canvas
                             width={this.canvasWidth}
                             height={this.canvasHeight}
-                            sprites={(this.state.circles as Sprite[]).concat(this.state.bullets).concat([this.state.turret]).concat(this.state.sprites)}
+                            sprites={sprites}
                             onClick={this.fireBullet.bind(this)}
                             onMouseMove={this.turretFollowMouse.bind(this)}
                         />
