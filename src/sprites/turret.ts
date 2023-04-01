@@ -35,7 +35,6 @@ export class Turret implements Sprite {
         this.turretModeKey = "turretMode";
 
         this.turretMode = this.getTurretMode();
-        console.log(this.turretMode);
     }
 
     draw(context: CanvasRenderingContext2D): void {        
@@ -64,7 +63,6 @@ export class Turret implements Sprite {
 
     getBullets(app: App): Bullet[] {
         let bullets: Bullet[];
-        console.log(this.turretMode);
 
         switch (this.turretMode) {
             case TurretMode.ARRAY.key:
@@ -86,7 +84,6 @@ export class Turret implements Sprite {
                 break;
             default:
                 // TurretMode.DEFAULT
-                console.log("default?");
                 bullets = [new Bullet(app, this.barrelStart, this.barrelEnd)];
                 break;
         }
