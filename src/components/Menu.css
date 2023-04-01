@@ -1,16 +1,21 @@
+h1 {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 1rem;
+}
+
 .menu {
-    text-align: center;
-    /*background-color: rgb(135, 206, 235);*/
+    background-color: rgb(135, 206, 235);
 }
 
-.menu ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
+.menuButton {
+    border: none;
+    background-color: transparent;
+    border-color: 0;
+    font-size: large;
 }
 
-.menu li {
-    display: inline-block;
-    padding: 0.5rem;
+.menuButton:hover:enabled {
+    text-decoration: underline;
+    cursor: pointer;
 }

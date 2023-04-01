@@ -7,12 +7,23 @@ interface MenuProps {
 }
 
 export function Menu(props: MenuProps): JSX.Element {
-    return (
-        <div className="menu">
+    return <header>
+        <div className="menu horizontalList">
+            <h1>Circles</h1>
+            <ul>
+                <li>
+                    <form action="https://github.com/johneastman/circles" method="get" target="_blank">
+                        <button className="menuButton" type="submit">Source Code</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+
+        <div className="horizontalList">
             <ul>
                 <li>Score: { props.score }</li>
                 <li><button className="button" onClick={props.resetGame}>(R) { props.numCircles === 0 ? "Play Again" : "Reset Game" }</button></li>
             </ul>
         </div>
-    );
+    </header>;
 }

@@ -9,7 +9,6 @@ import { Color } from "../utils/color";
 import Canvas from './Canvas';
 import { HighScores } from "./HighScores";
 import { TurretModeComponent } from "./TurretMode";
-import { Footer } from "./Footer";
 import { Text } from "../sprites/text";
 import { Menu } from "./Menu";
 import { Sprite } from "../sprites/sprite";
@@ -97,7 +96,7 @@ class App extends React.Component<{}, AppState> {
                     </div>
                 </div>
 
-                <Footer/>
+                {/*<Footer/>*/}
             </>
         );
     }
