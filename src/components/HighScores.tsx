@@ -1,6 +1,7 @@
 import React from "react";
-import { ordinal } from "../game/util";
+import { ordinal } from "../utils/util";
 import "./HighScores.css";
+import { getValue, setValue, removeValue } from "../utils/storage";
 
 class HighScore {
     score: number;
@@ -96,7 +97,7 @@ export class HighScores extends React.Component<HighScoresProps, {}> {
     }
 
     private removeScores(): void {
-        localStorage.removeItem(this.localStorageKey);
+        removeValue(this.localStorageKey);
         this.forceUpdate();
     }
 
@@ -105,7 +106,7 @@ export class HighScores extends React.Component<HighScoresProps, {}> {
      */
     private saveScores(scores: HighScore[]): void {
         let JSONScores: {score: string, date: string}[] = scores.map(score => score.jsonify());
-        localStorage.setItem(this.localStorageKey, JSON.stringify(JSONScores));
+        setValue(this.localStorageKey, JSON.stringify(JSONScores));
     }
 
     /**
@@ -117,7 +118,7 @@ export class HighScores extends React.Component<HighScoresProps, {}> {
      * @returns list of {@link HighScore} objects.
      */
     private getScores(): HighScore[] {
-        let scoresData: string | null = localStorage.getItem(this.localStorageKey);
+        let scoresData: string | null = getValue(this.localStorageKey);
         return scoresData === null ? [] : this.parseJSON(scoresData);
     }
 

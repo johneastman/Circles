@@ -2,10 +2,10 @@ import React from "react";
 
 import "./App.css";
 import { Circle, TargetCircle, Bullet, SplitterCircle } from "../sprites/circles";
-import { Vector } from "../game/vector";
+import { Vector } from "../utils/vector";
 import { Turret, TurretMode } from "../sprites/turret";
-import { getRandomColor, percentChance } from  "../game/util";
-import { Color } from "../game/color";
+import { getRandomColor, percentChance } from  "../utils/util";
+import { Color } from "../utils/color";
 import Canvas from './Canvas';
 import { HighScores } from "./HighScores";
 import { TurretModeComponent } from "./TurretMode";
@@ -145,16 +145,16 @@ class App extends React.Component<{}, AppState> {
                 this.resetGame();
                 break;
             case TurretMode.DEFAULT.key:
-                turret.turretMode = TurretMode.DEFAULT;
+                turret.setTurretMode(TurretMode.DEFAULT.key)
                 break;
             case TurretMode.BOUNCE.key:
-                turret.turretMode = TurretMode.BOUNCE;
+                turret.setTurretMode(TurretMode.BOUNCE.key)
                 break;
             case TurretMode.ARRAY.key:
-                turret.turretMode = TurretMode.ARRAY;
+                turret.setTurretMode(TurretMode.ARRAY.key)
                 break;
             case TurretMode.BURST.key:
-                turret.turretMode = TurretMode.BURST;
+                turret.setTurretMode(TurretMode.BURST.key)
                 break;
         }
         this.setState({turret: turret});

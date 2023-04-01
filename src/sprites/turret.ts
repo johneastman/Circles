@@ -1,7 +1,8 @@
 import App from "../components/App";
 import { Bullet, SplitterBullet } from "./circles";
 import { Sprite } from "./sprite";
-import { Vector } from "../game/vector";
+import { Vector } from "../utils/vector";
+import { getValue, setValue } from "../utils/storage";
 
 export class TurretMode {
     static DEFAULT: {key: string, displayName: string} = {key: "1", displayName: "Default"};
@@ -23,15 +24,18 @@ export class Turret implements Sprite {
     barrelStart: Vector;
     barrelEnd: Vector;
 
-    turretMode: {key: string, displayName: string};
+    turretMode: string;
+    turretModeKey: string;
     /*
     position: where to place the turret. This will be the (x, y) position for the base of the turret.
     */
     constructor(position: Vector) {        
         this.barrelStart = position;
         this.barrelEnd = new Vector(position.x, position.y - this.turretLength);
+        this.turretModeKey = "turretMode";
 
-        this.turretMode = TurretMode.DEFAULT;
+        this.turretMode = this.getTurretMode();
+        console.log(this.turretMode);
     }
 
     draw(context: CanvasRenderingContext2D): void {        
@@ -60,9 +64,10 @@ export class Turret implements Sprite {
 
     getBullets(app: App): Bullet[] {
         let bullets: Bullet[];
+        console.log(this.turretMode);
 
         switch (this.turretMode) {
-            case TurretMode.ARRAY:
+            case TurretMode.ARRAY.key:
                 let perpendicularPoints: Vector[] = Vector.perpendicularTo(this.barrelStart, this.barrelEnd, 8);
                 let left: Vector = perpendicularPoints[0];
                 let right: Vector = perpendicularPoints[1];
@@ -73,17 +78,27 @@ export class Turret implements Sprite {
                     new Bullet(app, this.barrelStart, right)
                 ];
                 break;
-            case TurretMode.BURST:
+            case TurretMode.BURST.key:
                 bullets = [new SplitterBullet(app, this.barrelStart, this.barrelEnd)];
                 break;
-            case TurretMode.BOUNCE:
+            case TurretMode.BOUNCE.key:
                 bullets = [new Bullet(app, this.barrelStart, this.barrelEnd, 0, 3)];
                 break;
             default:
                 // TurretMode.DEFAULT
+                console.log("default?");
                 bullets = [new Bullet(app, this.barrelStart, this.barrelEnd)];
                 break;
         }
         return bullets;
+    }
+
+    setTurretMode(mode: string): void {
+        this.turretMode = mode;
+        setValue(this.turretModeKey, mode);
+    }
+
+    getTurretMode(): string {
+        return getValue(this.turretModeKey) || TurretMode.DEFAULT.key;
     }
 }

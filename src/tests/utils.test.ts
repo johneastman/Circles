@@ -1,5 +1,5 @@
-import { Color } from "../game/color";
-import { getRandomInteger, getRandomFloat, getRandomColor, sign, colors, ordinal } from "../game/util";
+import { Color } from "../utils/color";
+import { getRandomInteger, getRandomFloat, getRandomColor, sign, colors, ordinal } from "../utils/util";
 
 test("get random integer", () => {
     let min: number = 0;
