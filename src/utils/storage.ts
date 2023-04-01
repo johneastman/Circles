@@ -9,3 +9,7 @@ export function getValue(key: string): string | null {
 export function removeValue(key: string): void {
     localStorage.removeItem(key);
 }
+
+export function clearValues(): void {
+    localStorage.clear();
+}

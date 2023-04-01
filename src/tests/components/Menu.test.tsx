@@ -7,6 +7,7 @@ test("render menu end-game state", () => {
             score={0}
             numCircles={0} 
             resetGame={ () => {} }
+            openDialog={ () => {} }
         />
     );
 
@@ -23,6 +24,7 @@ test("render menu game-play state", () => {
             score={5}
             numCircles={1}
             resetGame={ () => {} }
+            openDialog={ () => {} }
         />
     );
 

@@ -13,9 +13,14 @@ h1 {
     background-color: transparent;
     border-color: 0;
     font-size: large;
+    padding: 0.5rem;
 }
 
 .menuButton:hover:enabled {
     text-decoration: underline;
     cursor: pointer;
+}
+
+.gameMenu li {
+    padding: 0.5rem;
 }

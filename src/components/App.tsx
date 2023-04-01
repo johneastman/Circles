@@ -12,6 +12,8 @@ import { TurretModeComponent } from "./TurretMode";
 import { Text } from "../sprites/text";
 import { Menu } from "./Menu";
 import { Sprite } from "../sprites/sprite";
+import { Dialog } from "./Dialog";
+import { clearValues } from "../utils/storage";
 
 interface AppState {
     score: number;
@@ -20,6 +22,7 @@ interface AppState {
     turret: Turret;
     isGameOver: boolean;  // to avoid infinite loops
     sprites: Sprite[];
+    isDialogOpen: boolean;
 }
 
 class App extends React.Component<{}, AppState> {
@@ -54,7 +57,8 @@ class App extends React.Component<{}, AppState> {
              * A global variable for additional sprites to be drawn on the canvas (anything other than circles,
              * bullets, and the turret).
              */
-            sprites: []
+            sprites: [],
+            isDialogOpen: false
         };
     }
 
@@ -67,37 +71,45 @@ class App extends React.Component<{}, AppState> {
             .concat(this.state.sprites);
 
         return (
-            <>
-                <Menu
-                    score={this.state.score}
-                    numCircles={this.state.circles.length}
-                    resetGame={this.resetGameMouseEvent.bind(this)}
-                />
+            <div style={{position: "relative"}}>
+                <div style={{filter: this.state.isDialogOpen ? "blur(0.20rem)" : "none"}}>
+                    <Menu
+                        score={this.state.score}
+                        numCircles={this.state.circles.length}
+                        resetGame={this.resetGameMouseEvent.bind(this)}
+                        openDialog={() => { this.setState({isDialogOpen: true}) }}
+                    />
 
-                <div className="gameWrapper" /* Position div right of center div: http://jsfiddle.net/1Lrph45y/4/ */ >
-                    <div className="center">
-                        <Canvas
-                            width={this.canvasWidth}
-                            height={this.canvasHeight}
-                            sprites={sprites}
-                            onClick={this.fireBullet.bind(this)}
-                            onMouseMove={this.turretFollowMouse.bind(this)}
-                        />
-                        <TurretModeComponent mode={this.state.turret.turretMode} />
-                    </div>
-                    <div className="scoreBoardFloating">
-                        <div className="scoreBoard">
-                            <HighScores 
-                                numTopScores={3}
-                                currentScore={this.state.score}
-                                isEndGame={this.isEndGame.bind(this)}
+                    <div className="gameWrapper" /* Position div right of center div: http://jsfiddle.net/1Lrph45y/4/ */ >
+                        <div className="center">
+                            <Canvas
+                                width={this.canvasWidth}
+                                height={this.canvasHeight}
+                                sprites={sprites}
+                                onClick={this.fireBullet.bind(this)}
+                                onMouseMove={this.turretFollowMouse.bind(this)}
                             />
+                            <TurretModeComponent mode={this.state.turret.turretMode} />
+                        </div>
+                        <div className="scoreBoardFloating">
+                            <div className="scoreBoard">
+                                <HighScores 
+                                    numTopScores={3}
+                                    currentScore={this.state.score}
+                                    isEndGame={this.isEndGame.bind(this)}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <Dialog
+                    isOpen={this.state.isDialogOpen}
+                    positiveAction={this.clearData.bind(this)}
+                    negativeAction={() => { this.setState({isDialogOpen: false}) }}/>
+
                 {/*<Footer/>*/}
-            </>
+            </div>
         );
     }
 
@@ -178,6 +190,19 @@ class App extends React.Component<{}, AppState> {
 
     resetGameMouseEvent(_: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
         this.resetGame();
+    }
+
+    clearData(): void {
+
+        // Set the turret mode back to default because the turret mode is stored in localStorage.
+        let turret: Turret = this.state.turret;
+        turret.setTurretMode(TurretMode.DEFAULT.key);
+
+        // Clear data from localStorage
+        clearValues();
+
+        // Update turret and close dialog
+        this.setState({isDialogOpen: false, turret: turret});
     }
 
     resetGame(): void {        

@@ -1,5 +1,6 @@
 .gameWrapper {
     text-align: center;
+    position: relative;
 }
 
 .center {
