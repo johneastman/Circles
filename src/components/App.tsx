@@ -173,19 +173,24 @@ class App extends React.Component<{}, AppState> {
 
     // Make the turret follow the player's mouse
     turretFollowMouse(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void {
-        let rect: DOMRect = (e.target as HTMLCanvasElement).getBoundingClientRect();
-        let mouseVector: Vector = new Vector(e.clientX - rect.left, e.clientY - rect.top);
 
-        let turret: Turret = this.state.turret;
-        turret.update(mouseVector);
-        this.setState({turret: turret});
+        if (!this.state.isDialogOpen) {
+            let rect: DOMRect = (e.target as HTMLCanvasElement).getBoundingClientRect();
+            let mouseVector: Vector = new Vector(e.clientX - rect.left, e.clientY - rect.top);
+    
+            let turret: Turret = this.state.turret;
+            turret.update(mouseVector);
+            this.setState({turret: turret});
+        }
     }
 
     // Fire a bullet when the user clicks on the canvas
     fireBullet(_: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void {
-        let turret: Turret = this.state.turret;
-        let bullets: Bullet[] = turret.getBullets(this);
-        this.setState({bullets: this.state.bullets.concat(bullets)});
+        if (!this.state.isDialogOpen) {
+            let turret: Turret = this.state.turret;
+            let bullets: Bullet[] = turret.getBullets(this);
+            this.setState({bullets: this.state.bullets.concat(bullets)});
+        }
     }
 
     resetGameMouseEvent(_: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
@@ -216,25 +221,28 @@ class App extends React.Component<{}, AppState> {
     }
 
     mainLoop() {
-        let circles: Circle[] = this.state.circles.concat(this.state.bullets);
-        for (let i = 0; i < circles.length; i++) {
-            const current: Circle = circles[i];
 
-            /*
-            Check collisions with the circles after the current circle in the array. Collisions with circles before the
-            current circle in the array do not need to be checked due to the commutative property (e.g., if A collides
-            with B, then B has, in a sense, collided with A).
-            */
-            const rest: Circle[] = circles.slice(i + 1);
-
-            for (let circle of rest) {
-                if (circle.collidedWith(current)) {
-                    circle.collisionUpdate(current);
-                } 
+        if (!this.state.isDialogOpen) {
+            let circles: Circle[] = this.state.circles.concat(this.state.bullets);
+            for (let i = 0; i < circles.length; i++) {
+                const current: Circle = circles[i];
+    
+                /*
+                Check collisions with the circles after the current circle in the array. Collisions with circles before the
+                current circle in the array do not need to be checked due to the commutative property (e.g., if A collides
+                with B, then B has, in a sense, collided with A).
+                */
+                const rest: Circle[] = circles.slice(i + 1);
+    
+                for (let circle of rest) {
+                    if (circle.collidedWith(current)) {
+                        circle.collisionUpdate(current);
+                    } 
+                }
+    
+                current.checkEdges(); // Handle how circles respond at the edges of the canvas
+                current.update();
             }
-
-            current.checkEdges(); // Handle how circles respond at the edges of the canvas
-            current.update();
         }
 
         requestAnimationFrame(this.mainLoop.bind(this));
