@@ -115,7 +115,8 @@ class App extends React.Component<{}, AppState> {
                 <Dialog
                     isOpen={this.state.isDialogOpen}
                     positiveAction={this.clearData.bind(this)}
-                    negativeAction={() => { this.setState({isDialogOpen: false}) }}/>
+                    negativeAction={() => { this.setState({isDialogOpen: false}) }}
+                />
 
                 {/*<Footer/>*/}
             </div>
