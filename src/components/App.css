@@ -1,3 +1,8 @@
+/*
+For reference:
+
+Position div right of center div: http://jsfiddle.net/1Lrph45y/4/
+*/
 .gameWrapper {
     text-align: center;
     position: relative;
@@ -5,20 +10,25 @@
 
 .center {
     display: inline-block;
-}
-
-.scoreBoardFloating {
+    margin-left: auto;
+    margin-right: auto;
     position: relative;
-    display: inline-block;
-    width: 0;
-    height: 0;
-    vertical-align: top;
 }
 
-.scoreBoard {
-    display: inline-block;
+.right {
     position: absolute;
+    top: 0;
+    left: 100%;
+    padding-left: 1rem;
     width: 20rem;
     text-align: left;
-    padding-left: 1rem;
+}
+
+.left {
+    position: absolute;
+    top: 0;
+    right: 100%;
+    padding-right: 1rem;
+    width: 20rem;
+    text-align: right;
 }

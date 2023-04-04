@@ -14,6 +14,7 @@ import { Menu } from "./Menu";
 import { Sprite } from "../sprites/sprite";
 import { Dialog } from "./Dialog";
 import { clearValues } from "../utils/storage";
+import { GameMode } from "./GameMode";
 
 interface AppState {
     score: number;
@@ -23,6 +24,7 @@ interface AppState {
     isGameOver: boolean;  // to avoid infinite loops
     sprites: Sprite[];
     isDialogOpen: boolean;
+    gameMode: string;
 }
 
 class App extends React.Component<{}, AppState> {
@@ -58,7 +60,8 @@ class App extends React.Component<{}, AppState> {
              * bullets, and the turret).
              */
             sprites: [],
-            isDialogOpen: false
+            isDialogOpen: false,
+            gameMode: "precision-shot"
         };
     }
 
@@ -80,7 +83,7 @@ class App extends React.Component<{}, AppState> {
                         openDialog={() => { this.setState({isDialogOpen: true}) }}
                     />
 
-                    <div className="gameWrapper" /* Position div right of center div: http://jsfiddle.net/1Lrph45y/4/ */ >
+                    <div className="gameWrapper">
                         <div className="center">
                             <Canvas
                                 width={this.canvasWidth}
@@ -90,13 +93,19 @@ class App extends React.Component<{}, AppState> {
                                 onMouseMove={this.turretFollowMouse.bind(this)}
                             />
                             <TurretModeComponent mode={this.state.turret.turretMode} />
-                        </div>
-                        <div className="scoreBoardFloating">
-                            <div className="scoreBoard">
+                            
+                            <div className="right">
                                 <HighScores 
                                     numTopScores={3}
                                     currentScore={this.state.score}
                                     isEndGame={this.isEndGame.bind(this)}
+                                />
+                            </div>
+
+                            <div className="left">
+                                <GameMode
+                                    gameMode={this.state.gameMode}
+                                    changeGameMode={this.changeGameMode.bind(this)}
                                 />
                             </div>
                         </div>
@@ -111,6 +120,10 @@ class App extends React.Component<{}, AppState> {
                 {/*<Footer/>*/}
             </div>
         );
+    }
+
+    changeGameMode(gameMode: string): void {
+        this.setState({gameMode: gameMode});
     }
 
     componentDidMount() {
