@@ -1,7 +1,7 @@
 import "./Menu.css";
 
 interface MenuProps {
-    score: number;
+    score: string;
     numCircles: number;
     resetGame: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
     openDialog(): void;

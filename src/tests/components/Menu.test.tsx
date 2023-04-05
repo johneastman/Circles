@@ -4,14 +4,14 @@ import { Menu } from '../../components/Menu';
 test("render menu end-game state", () => {
     render(
         <Menu 
-            score={0}
+            score="0"
             numCircles={0} 
             resetGame={ () => {} }
             openDialog={ () => {} }
         />
     );
 
-    expect(screen.getByText(/Score: 0/)).toBeInTheDocument();
+    expect(screen.getByText("Score: 0")).toBeInTheDocument();
 
     const playAgainButton = screen.getByRole("button", {name: "(R) Play Again"});
     expect(playAgainButton).toBeInTheDocument();
@@ -21,7 +21,7 @@ test("render menu end-game state", () => {
 test("render menu game-play state", () => {
     render(
         <Menu 
-            score={5}
+            score="5"
             numCircles={1}
             resetGame={ () => {} }
             openDialog={ () => {} }

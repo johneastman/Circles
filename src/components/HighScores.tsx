@@ -1,13 +1,17 @@
 import React from "react";
-import { ordinal } from "../utils/util";
+import { getScore, ordinal } from "../utils/util";
 import "./HighScores.css";
 import { getValue, setValue, removeValue } from "../utils/storage";
+import { GameMode } from "./GameMode";
 
-class HighScore {
+export class Score {
     score: number;
     date: Date;
-    constructor(score: number, date: Date = new Date()) {
+    gameMode: GameMode;
+    
+    constructor(score: number, gameMode: GameMode, date: Date = new Date()) {
         this.score = score;
+        this.gameMode = gameMode;
         this.date = date;
     }
 
@@ -23,14 +27,15 @@ class HighScore {
         return this.date.toLocaleString("default", formattingOptions);
     }
 
-    jsonify(): {score: string, date: string} {
-        return {score: this.score.toString(), date: this.date.toString()};
+    jsonify(): {score: string, gameMode: string, date: string} {
+        return {score: this.score.toString(), gameMode: this.gameMode, date: this.date.toString()};
     }
 }
 
 interface HighScoresProps {
     numTopScores: number;
     currentScore: number;
+    gameMode: GameMode;
     isEndGame: () => boolean;
 }
 
@@ -44,11 +49,11 @@ export class HighScores extends React.Component<HighScoresProps, {}> {
     }
 
     render(): JSX.Element {
-        let highScores: HighScore[] = this.getScores();
+        let highScores: Score[] = this.getScores();
 
         if (this.props.isEndGame()) {
             highScores = highScores
-                .concat(new HighScore(this.props.currentScore))
+                .concat(new Score(this.props.currentScore, this.props.gameMode))
                 .sort((first, second) => first.score - second.score)
                 .reverse()
                 .slice(0, this.props.numTopScores);  // Only store in memory the top "this.props.numTopScores" scores.
@@ -77,7 +82,7 @@ export class HighScores extends React.Component<HighScoresProps, {}> {
                             {highScores.map((score, index) =>
                                 <tr key={index + 1}>
                                     <td><strong>{ordinal(index + 1)}</strong></td>
-                                    <td>{score.score}</td>
+                                    <td>{getScore(score.score, score.gameMode)}</td>
                                     <td>{score.formatDate()}</td>
                                 </tr>
                             )}
@@ -88,11 +93,12 @@ export class HighScores extends React.Component<HighScoresProps, {}> {
         );
     }
 
-    parseJSON(rawJSON: string): HighScore[] {
-        return (JSON.parse(rawJSON) as {score: string, date: string}[]).map(s => {
+    parseJSON(rawJSON: string): Score[] {
+        return (JSON.parse(rawJSON) as {score: string, gameMode: string, date: string}[]).map(s => {
             let score: number = Number.parseInt(s.score);
+            let gameMode: GameMode = s.gameMode as GameMode;
             let date: Date = new Date(s.date);
-            return new HighScore(score, date);
+            return new Score(score, gameMode, date);
         });
     }
 
@@ -104,8 +110,8 @@ export class HighScores extends React.Component<HighScoresProps, {}> {
     /**
      * Convert high scores to JSON and save to {@link localStorage}.
      */
-    private saveScores(scores: HighScore[]): void {
-        let JSONScores: {score: string, date: string}[] = scores.map(score => score.jsonify());
+    private saveScores(scores: Score[]): void {
+        let JSONScores: {score: string, gameMode: string, date: string}[] = scores.map(score => score.jsonify());
         setValue(this.localStorageKey, JSON.stringify(JSONScores));
     }
 
@@ -117,7 +123,7 @@ export class HighScores extends React.Component<HighScoresProps, {}> {
      * 
      * @returns list of {@link HighScore} objects.
      */
-    private getScores(): HighScore[] {
+    private getScores(): Score[] {
         let scoresData: string | null = getValue(this.localStorageKey);
         return scoresData === null ? [] : this.parseJSON(scoresData);
     }

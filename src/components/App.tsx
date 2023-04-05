@@ -4,7 +4,7 @@ import "./App.css";
 import { Circle, TargetCircle, Bullet, SplitterCircle } from "../sprites/circles";
 import { Vector } from "../utils/vector";
 import { Turret, TurretMode } from "../sprites/turret";
-import { getRandomColor, percentChance } from  "../utils/util";
+import { getRandomColor, getScore, percentChance } from  "../utils/util";
 import { Color } from "../utils/color";
 import Canvas from './Canvas';
 import { HighScores } from "./HighScores";
@@ -77,7 +77,7 @@ class App extends React.Component<{}, AppState> {
             <div style={{position: "relative"}}>
                 <div style={{filter: this.state.isDialogOpen ? "blur(0.20rem)" : "none"}}>
                     <Menu
-                        score={this.state.score}
+                        score={getScore(this.state.score, this.state.gameMode)}
                         numCircles={this.state.circles.length}
                         resetGame={this.resetGameMouseEvent.bind(this)}
                         openDialog={() => { this.setState({isDialogOpen: true}) }}
@@ -96,6 +96,7 @@ class App extends React.Component<{}, AppState> {
                             
                             <div className="right">
                                 <HighScores 
+                                    gameMode={this.state.gameMode}
                                     numTopScores={3}
                                     currentScore={this.state.score}
                                     isEndGame={this.isEndGame.bind(this)}
@@ -149,7 +150,7 @@ class App extends React.Component<{}, AppState> {
             );
 
             let scoreText: Text = new Text(
-                `Score: ${this.state.score}`,
+                `Score: ${getScore(this.state.score, this.state.gameMode)}`,
                 this.canvasWidth / 2,
                 (this.canvasHeight / 2) + 33,
                 undefined,
@@ -302,7 +303,17 @@ class App extends React.Component<{}, AppState> {
     }
 
     updateScore(bullet: Bullet): void {
-        this.setState({score: this.state.score + bullet.scoreMultiplier});
+        switch(this.state.gameMode) {
+            case GameMode.PRECISION_SHOT:
+                this.setState({score: this.state.score + bullet.scoreMultiplier});
+                break;
+            case GameMode.QUICK_DRAW:
+                break;
+            
+            default:
+                break;
+        }
+       
     }
 }
 

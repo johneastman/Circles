@@ -1,3 +1,4 @@
+import { GameMode } from "../components/GameMode";
 import { Color } from "./color";
 
 
@@ -60,4 +61,17 @@ export function ordinal(n: number): string {
         suffix = ['th', 'st', 'nd', 'rd', 'th'][Math.min(n % 10, 4)]
     }
     return `${n}${suffix}`;
+}
+
+export function getScore(score: number, gameMode: GameMode): string {
+
+    if (gameMode === GameMode.QUICK_DRAW) {
+        let minutes: string = ("0" + Math.floor((score / 60000) % 60)).slice(-2);
+        let seconds: string = ("0" + Math.floor((score / 1000) % 60)).slice(-2);
+        let milliseconds: string = ("0" + ((score / 10) % 100)).slice(-2);
+        return `${minutes}:${seconds}:${milliseconds}`;
+    }
+
+    // GameMode.PRECISION_SHOT
+    return `${score}`;
 }
