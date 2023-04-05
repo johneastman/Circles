@@ -13,8 +13,8 @@ import { Text } from "../sprites/text";
 import { Menu } from "./Menu";
 import { Sprite } from "../sprites/sprite";
 import { Dialog } from "./Dialog";
-import { clearValues } from "../utils/storage";
-import { GameMode } from "./GameMode";
+import { clearValues, getValue, setValue } from "../utils/storage";
+import { GameModeComponent, GameMode } from "./GameMode";
 
 interface AppState {
     score: number;
@@ -24,7 +24,7 @@ interface AppState {
     isGameOver: boolean;  // to avoid infinite loops
     sprites: Sprite[];
     isDialogOpen: boolean;
-    gameMode: string;
+    gameMode: GameMode;
 }
 
 class App extends React.Component<{}, AppState> {
@@ -61,7 +61,7 @@ class App extends React.Component<{}, AppState> {
              */
             sprites: [],
             isDialogOpen: false,
-            gameMode: "precision-shot"
+            gameMode: getValue("gameMode") as GameMode || GameMode.PRECISION_SHOT
         };
     }
 
@@ -103,7 +103,7 @@ class App extends React.Component<{}, AppState> {
                             </div>
 
                             <div className="left">
-                                <GameMode
+                                <GameModeComponent
                                     gameMode={this.state.gameMode}
                                     changeGameMode={this.changeGameMode.bind(this)}
                                 />
@@ -123,8 +123,9 @@ class App extends React.Component<{}, AppState> {
         );
     }
 
-    changeGameMode(gameMode: string): void {
+    changeGameMode(gameMode: GameMode): void {
         this.setState({gameMode: gameMode});
+        setValue("gameMode", gameMode);
     }
 
     componentDidMount() {
@@ -221,7 +222,7 @@ class App extends React.Component<{}, AppState> {
         clearValues();
 
         // Update turret and close dialog
-        this.setState({isDialogOpen: false, turret: turret});
+        this.setState({isDialogOpen: false, turret: turret, gameMode: GameMode.PRECISION_SHOT});
     }
 
     resetGame(): void {        

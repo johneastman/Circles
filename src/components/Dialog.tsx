@@ -33,6 +33,7 @@ export class Dialog extends React.Component<DialogProps, {}> {
                 <ul>
                     <li>High Scores</li>
                     <li>Turret Mode</li>
+                    <li>Game Mode</li>
                 </ul>
                 Once deleted, this data is gone forever and cannot be recovered.
 

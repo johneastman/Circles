@@ -1,36 +1,41 @@
 import "./GameMode.css";
 
-interface GameModeProps {
-    gameMode: string;
-    changeGameMode: (gameMode: string) => void;
+export enum GameMode {
+    PRECISION_SHOT = "Precision Shot",
+    QUICK_DRAW = "Quick Draw"
 }
 
-export function GameMode(props: GameModeProps): JSX.Element {
+interface GameModeProps {
+    gameMode: string;
+    changeGameMode: (gameMode: GameMode) => void;
+}
+
+export function GameModeComponent(props: GameModeProps): JSX.Element {
 
     // Each label needs to be in a div to align the radio buttons vertically
     return <>
         <strong>Game Mode</strong>
         <div className="form-check">
             <label>
-                Precision Shot
+                { GameMode.PRECISION_SHOT }
                 <input
                     data-testid="radio-precision-shot"
                     className="radio-button"
                     type="radio"
-                    checked={props.gameMode === "precision-shot"}
-                    onChange={() => { props.changeGameMode("precision-shot") }}
+                    checked={props.gameMode === GameMode.PRECISION_SHOT}
+                    onChange={() => { props.changeGameMode(GameMode.PRECISION_SHOT) }}
                 />
             </label>
         </div>
         <div className="form-check">
             <label>
-                Quick Draw
+                { GameMode.QUICK_DRAW }
                 <input
                     data-testid="radio-quick-draw"
                     className="radio-button"
                     type="radio"
-                    checked={props.gameMode === "quick-draw"}
-                    onChange={() => { props.changeGameMode("quick-draw") }}
+                    checked={props.gameMode === GameMode.QUICK_DRAW}
+                    onChange={() => { props.changeGameMode(GameMode.QUICK_DRAW) }}
                 />
             </label>
         </div>
