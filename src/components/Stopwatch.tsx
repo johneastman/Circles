@@ -1,31 +1,32 @@
 import { useState, useEffect } from "react";
 import "./Stopwatch.css";
+import { GameMode } from "./GameMode";
+import { getScore } from "../utils/util";
 
-export function Stopwatch(): JSX.Element {
+interface StopwatchProps {
+    isRunning: boolean;
+    time: number;
+    updateScore: (score: number, gameMode: GameMode) => void;
+}
 
-    const [time, setTime] = useState<number>(0);
-    const [running, setRunning] = useState(false);
+export function Stopwatch(props: StopwatchProps): JSX.Element {
+
     const [timer, setTimer] = useState<NodeJS.Timer>();
+    let isRunning: boolean = props.isRunning;
 
     useEffect(() => {
-        if (running) {
+        if (isRunning) {
             let interval = setInterval(() => {
-                setTime((prevTime: number) => prevTime + 10);
+                props.updateScore(props.time + 10, GameMode.QUICK_DRAW);
             }, 10);
             setTimer(interval);
         } else {
             clearInterval(timer);
         }
         return () => clearInterval(timer);
-    }, [running]);
+    // Adding recommended values to this list causes significant performance issues.
+    // eslint-disable-next-line
+    }, [isRunning]);
 
-    return <>
-        <div className="numbers">
-            <span>{("0" + Math.floor((time / 60000) % 60)).slice(-2)}:</span>
-            <span>{("0" + Math.floor((time / 1000) % 60)).slice(-2)}:</span>
-            <span>{("0" + ((time / 10) % 100)).slice(-2)}</span>
-        </div>
-        <button onClick={() => { setRunning(!running) }}>{ !running ? "Start" : "Stop"}</button>
-        <button onClick={ () => { setRunning(false); setTime(0); } }>Reset</button>
-    </>
+    return <>{getScore(props.time, GameMode.QUICK_DRAW)}</>
 }

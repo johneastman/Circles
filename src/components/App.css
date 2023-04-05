@@ -20,7 +20,7 @@ Position div right of center div: http://jsfiddle.net/1Lrph45y/4/
     top: 0;
     left: 100%;
     padding-left: 1rem;
-    width: 20rem;
+    width: 25rem;
     text-align: left;
 }
 
@@ -29,6 +29,6 @@ Position div right of center div: http://jsfiddle.net/1Lrph45y/4/
     top: 0;
     right: 100%;
     padding-right: 1rem;
-    width: 20rem;
+    width: 25rem;
     text-align: right;
 }

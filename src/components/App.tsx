@@ -15,6 +15,7 @@ import { Sprite } from "../sprites/sprite";
 import { Dialog } from "./Dialog";
 import { clearValues, getValue, setValue } from "../utils/storage";
 import { GameModeComponent, GameMode } from "./GameMode";
+import { Stopwatch } from "./Stopwatch";
 
 interface AppState {
     score: number;
@@ -76,12 +77,28 @@ class App extends React.Component<{}, AppState> {
         return (
             <div style={{position: "relative"}}>
                 <div style={{filter: this.state.isDialogOpen ? "blur(0.20rem)" : "none"}}>
-                    <Menu
-                        score={getScore(this.state.score, this.state.gameMode)}
-                        numCircles={this.state.circles.length}
-                        resetGame={this.resetGameMouseEvent.bind(this)}
-                        openDialog={() => { this.setState({isDialogOpen: true}) }}
-                    />
+                    <Menu openDialog={() => { this.setState({isDialogOpen: true}) }}/>
+
+                    <div className="horizontalList gameMenu">
+                        <ul>
+                            <li>
+                                Score: { this.state.gameMode === GameMode.QUICK_DRAW
+                                    ?   <Stopwatch
+                                            isRunning={!this.state.isGameOver}
+                                            time={this.state.score}
+                                            updateScore={this.updateScore.bind(this)}
+                                        />
+                                    :   this.state.score
+                                }
+                            </li>
+                            <li>
+                                <button
+                                    className="button"
+                                    onClick={this.resetGameMouseEvent.bind(this)}>(R) { this.state.circles.length === 0 ? "Play Again" : "Reset Game" }
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
 
                     <div className="gameWrapper">
                         <div className="center">
@@ -127,6 +144,8 @@ class App extends React.Component<{}, AppState> {
     changeGameMode(gameMode: GameMode): void {
         this.setState({gameMode: gameMode});
         setValue("gameMode", gameMode);
+        
+        this.resetGame();
     }
 
     componentDidMount() {
@@ -302,18 +321,10 @@ class App extends React.Component<{}, AppState> {
         this.setState({bullets: this.state.bullets.concat(newBullets)});
     }
 
-    updateScore(bullet: Bullet): void {
-        switch(this.state.gameMode) {
-            case GameMode.PRECISION_SHOT:
-                this.setState({score: this.state.score + bullet.scoreMultiplier});
-                break;
-            case GameMode.QUICK_DRAW:
-                break;
-            
-            default:
-                break;
+    updateScore(value: number, gameMode: GameMode): void {
+        if (this.state.gameMode === gameMode) {
+            this.setState({score: this.state.score + value});
         }
-       
     }
 }
 

@@ -49,7 +49,7 @@ test("renders high scores with one score", () => {
 function getScores(): Score[] {
     let scores: Score[] = [];
     
-    let scoreRawData = localStorage.getItem("highScores");
+    let scoreRawData = localStorage.getItem(GameMode.PRECISION_SHOT);
     if (scoreRawData != null) {
         scores = (JSON.parse(scoreRawData) as {score: string, gameMode: string, date: string}[]).map(s => {
             let score: number = Number.parseInt(s.score);

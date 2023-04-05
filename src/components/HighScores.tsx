@@ -7,11 +7,9 @@ import { GameMode } from "./GameMode";
 export class Score {
     score: number;
     date: Date;
-    gameMode: GameMode;
     
     constructor(score: number, gameMode: GameMode, date: Date = new Date()) {
         this.score = score;
-        this.gameMode = gameMode;
         this.date = date;
     }
 
@@ -27,8 +25,8 @@ export class Score {
         return this.date.toLocaleString("default", formattingOptions);
     }
 
-    jsonify(): {score: string, gameMode: string, date: string} {
-        return {score: this.score.toString(), gameMode: this.gameMode, date: this.date.toString()};
+    jsonify(): {score: string, date: string} {
+        return {score: this.score.toString(), date: this.date.toString()};
     }
 }
 
@@ -41,22 +39,21 @@ interface HighScoresProps {
 
 export class HighScores extends React.Component<HighScoresProps, {}> {
 
-    localStorageKey: string;
-    constructor(props: HighScoresProps) {
-        super(props);
-
-        this.localStorageKey = "highScores";
-    }
-
     render(): JSX.Element {
         let highScores: Score[] = this.getScores();
 
         if (this.props.isEndGame()) {
             highScores = highScores
                 .concat(new Score(this.props.currentScore, this.props.gameMode))
-                .sort((first, second) => first.score - second.score)
-                .reverse()
-                .slice(0, this.props.numTopScores);  // Only store in memory the top "this.props.numTopScores" scores.
+                .sort((first, second) => first.score - second.score);
+            
+            // The highest score for the Quick Draw game mode are the smallest times
+            if (this.props.gameMode === GameMode.PRECISION_SHOT) {
+                highScores = highScores.reverse();
+            }
+            
+            // Only store in memory the top "this.props.numTopScores" scores.
+            highScores = highScores.slice(0, this.props.numTopScores);
             
             this.saveScores(highScores);
         }
@@ -82,7 +79,7 @@ export class HighScores extends React.Component<HighScoresProps, {}> {
                             {highScores.map((score, index) =>
                                 <tr key={index + 1}>
                                     <td><strong>{ordinal(index + 1)}</strong></td>
-                                    <td>{getScore(score.score, score.gameMode)}</td>
+                                    <td>{getScore(score.score, this.props.gameMode)}</td>
                                     <td>{score.formatDate()}</td>
                                 </tr>
                             )}
@@ -103,7 +100,7 @@ export class HighScores extends React.Component<HighScoresProps, {}> {
     }
 
     private removeScores(): void {
-        removeValue(this.localStorageKey);
+        removeValue(this.props.gameMode);
         this.forceUpdate();
     }
 
@@ -111,8 +108,8 @@ export class HighScores extends React.Component<HighScoresProps, {}> {
      * Convert high scores to JSON and save to {@link localStorage}.
      */
     private saveScores(scores: Score[]): void {
-        let JSONScores: {score: string, gameMode: string, date: string}[] = scores.map(score => score.jsonify());
-        setValue(this.localStorageKey, JSON.stringify(JSONScores));
+        let JSONScores: {score: string, date: string}[] = scores.map(score => score.jsonify());
+        setValue(this.props.gameMode, JSON.stringify(JSONScores));
     }
 
     /**
@@ -121,10 +118,12 @@ export class HighScores extends React.Component<HighScoresProps, {}> {
      * 
      * If no high scores are found in {@link localStorage}, return an empty list.
      * 
+     * Use the game mode as the localStorage key so the top scores for each game mode are stored separately.
+     * 
      * @returns list of {@link HighScore} objects.
      */
     private getScores(): Score[] {
-        let scoresData: string | null = getValue(this.localStorageKey);
+        let scoresData: string | null = getValue(this.props.gameMode);
         return scoresData === null ? [] : this.parseJSON(scoresData);
     }
 

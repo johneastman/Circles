@@ -3,6 +3,7 @@ import { Vector } from "../utils/vector";
 import { sign, getCurrentTime, getRandomFloat, getRandomInteger, getRandomColor } from "../utils/util"
 import App from "../components/App";
 import { Sprite } from "./sprite";
+import { GameMode } from "../components/GameMode";
 
 export abstract class Circle implements Sprite {
     canvasWidth: number;
@@ -329,7 +330,7 @@ export class Bullet extends Circle {
             }));
         } else if (other instanceof TargetCircle) {
             this.scoreMultiplier += 1;
-            this.app.updateScore(this);
+            this.app.updateScore(this.scoreMultiplier, GameMode.PRECISION_SHOT);
             this.app.removeCircle(other);
         }
     }
@@ -344,7 +345,7 @@ export class SplitterBullet extends Bullet {
             this.app.removeCircle(other);
 
             this.scoreMultiplier += 1;
-            this.app.updateScore(this);
+            this.app.updateScore(this.scoreMultiplier, GameMode.PRECISION_SHOT);
 
             /*
             Create 4 new bullets equidistant from one another around the circumference of the circle (i.e., a "T" shape

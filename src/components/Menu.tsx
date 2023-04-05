@@ -1,9 +1,6 @@
 import "./Menu.css";
 
 interface MenuProps {
-    score: string;
-    numCircles: number;
-    resetGame: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
     openDialog(): void;
 }
 
@@ -18,13 +15,6 @@ export function Menu(props: MenuProps): JSX.Element {
                         <button className="menuButton" type="submit">Source Code</button>
                     </form>
                 </li>
-            </ul>
-        </div>
-
-        <div className="horizontalList gameMenu">
-            <ul>
-                <li>Score: { props.score }</li>
-                <li><button className="button" onClick={props.resetGame}>(R) { props.numCircles === 0 ? "Play Again" : "Reset Game" }</button></li>
             </ul>
         </div>
     </header>;
