@@ -3,7 +3,7 @@ import { ordinal } from "../utils/util";
 import "./HighScores.css";
 import { getValue, setValue, removeValue } from "../utils/storage";
 
-class HighScore {
+export class HighScore {
     score: number;
     date: Date;
     constructor(score: number, date: Date = new Date()) {
