@@ -221,7 +221,7 @@ class App extends React.Component<{}, AppState> {
         // Clear data from localStorage
         clearValues();
 
-        // Update turret and close dialog
+        // Update state to reset saved data to default values
         this.setState({isDialogOpen: false, turret: turret, gameMode: GameMode.PRECISION_SHOT});
     }
 
