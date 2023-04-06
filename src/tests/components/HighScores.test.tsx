@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { renderToStaticMarkup } from "react-dom/server";
-import { HighScores, HighScore } from '../../components/HighScores';
+import { HighScores, HighScore, HighScoreJSON } from '../../components/HighScores';
 
 test("renders high scores with no scores", () => {
     render(<HighScores numTopScores={3} currentScore={0} isEndGame={() => { return false }} />);
@@ -50,7 +50,7 @@ function getScores(): HighScore[] {
     
     let scoreRawData = localStorage.getItem("highScores");
     if (scoreRawData != null) {
-        scores = (JSON.parse(scoreRawData) as {score: string, date: string}[]).map(s => {
+        scores = (JSON.parse(scoreRawData) as HighScoreJSON[]).map(s => {
             let score: number = Number.parseInt(s.score);
             let date: Date = new Date(s.date);
             return new HighScore(score, date);
@@ -58,4 +58,3 @@ function getScores(): HighScore[] {
     }
     return scores;
 }
-

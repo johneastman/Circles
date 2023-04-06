@@ -3,6 +3,16 @@ import { ordinal } from "../utils/util";
 import "./HighScores.css";
 import { getValue, setValue, removeValue } from "../utils/storage";
 
+/**
+ * Defines JSON object structure for how high scores are saved in localStorage.
+ * 
+ * Need to export for tests
+ */
+export interface HighScoreJSON {
+    score: string;
+    date: string;
+}
+
 export class HighScore {
     score: number;
     date: Date;
@@ -23,7 +33,7 @@ export class HighScore {
         return this.date.toLocaleString("default", formattingOptions);
     }
 
-    jsonify(): {score: string, date: string} {
+    jsonify(): HighScoreJSON {
         return {score: this.score.toString(), date: this.date.toString()};
     }
 }
@@ -89,7 +99,7 @@ export class HighScores extends React.Component<HighScoresProps, {}> {
     }
 
     parseJSON(rawJSON: string): HighScore[] {
-        return (JSON.parse(rawJSON) as {score: string, date: string}[]).map(s => {
+        return (JSON.parse(rawJSON) as HighScoreJSON[]).map(s => {
             let score: number = Number.parseInt(s.score);
             let date: Date = new Date(s.date);
             return new HighScore(score, date);
@@ -105,7 +115,7 @@ export class HighScores extends React.Component<HighScoresProps, {}> {
      * Convert high scores to JSON and save to {@link localStorage}.
      */
     private saveScores(scores: HighScore[]): void {
-        let JSONScores: {score: string, date: string}[] = scores.map(score => score.jsonify());
+        let JSONScores: HighScoreJSON[] = scores.map(score => score.jsonify());
         setValue(this.localStorageKey, JSON.stringify(JSONScores));
     }
 
