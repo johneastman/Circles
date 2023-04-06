@@ -1,10 +1,22 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen } from "@testing-library/react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { HighScores, HighScore, HighScoreJSON } from '../../components/HighScores';
+import {
+    HighScores,
+    HighScore,
+    HighScoreJSON,
+} from "../../components/HighScores";
 
 test("renders high scores with no scores", () => {
-    render(<HighScores numTopScores={3} currentScore={0} isEndGame={() => { return false }} />);
-    
+    render(
+        <HighScores
+            numTopScores={3}
+            currentScore={0}
+            isEndGame={() => {
+                return false;
+            }}
+        />
+    );
+
     // Header
     expect(screen.getByText("High Scores")).toBeInTheDocument();
 
@@ -13,27 +25,34 @@ test("renders high scores with no scores", () => {
 });
 
 test("renders high scores with one score", () => {
-
     /**
      * If "isEndGame" returns true, it will create a score and store it in localStorage. We can then access that score by
      * retrieving it from localStorage, and use those score to compare the rendered component to the expected values
      */
     const { container } = render(
-        <HighScores numTopScores={3} currentScore={0} isEndGame={() => { return true }} />
+        <HighScores
+            numTopScores={3}
+            currentScore={0}
+            isEndGame={() => {
+                return true;
+            }}
+        />
     );
 
     let scores: HighScore[] = getScores();
-    
+
     // Header
     expect(screen.getByText("High Scores")).toBeInTheDocument();
-    
+
     let scoreTable = (
         <table>
             <tbody>
                 <tr key="1">
-                    <td><strong>1st</strong></td>
+                    <td>
+                        <strong>1st</strong>
+                    </td>
                     <td>0</td>
-                    <td>{ scores[0].formatDate() }</td>
+                    <td>{scores[0].formatDate()}</td>
                 </tr>
             </tbody>
         </table>
@@ -47,10 +66,10 @@ test("renders high scores with one score", () => {
 
 function getScores(): HighScore[] {
     let scores: HighScore[] = [];
-    
+
     let scoreRawData = localStorage.getItem("highScores");
     if (scoreRawData != null) {
-        scores = (JSON.parse(scoreRawData) as HighScoreJSON[]).map(s => {
+        scores = (JSON.parse(scoreRawData) as HighScoreJSON[]).map((s) => {
             let score: number = Number.parseInt(s.score);
             let date: Date = new Date(s.date);
             return new HighScore(score, date);

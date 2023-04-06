@@ -1,18 +1,23 @@
 import React from "react";
 
 import "./App.css";
-import { Circle, TargetCircle, Bullet, SplitterCircle } from "../sprites/circles";
+import {
+    Circle,
+    TargetCircle,
+    Bullet,
+    SplitterCircle,
+} from "../sprites/circles";
 import { Vector } from "../utils/vector";
 import { Turret, TurretMode } from "../sprites/turret";
-import { getRandomColor, percentChance } from  "../utils/util";
+import { getRandomColor, percentChance } from "../utils/util";
 import { Color } from "../utils/color";
-import Canvas from './Canvas';
+import Canvas from "./Canvas";
 import { HighScores } from "./HighScores";
 import { TurretModeComponent } from "./TurretMode";
 import { Text } from "../sprites/text";
 import { Menu } from "./Menu";
 import { Sprite } from "../sprites/sprite";
-import { Dialog } from "./Dialog";
+import Dialog from "./Dialog";
 import { clearValues } from "../utils/storage";
 
 interface AppState {
@@ -20,13 +25,12 @@ interface AppState {
     circles: Circle[];
     bullets: Bullet[];
     turret: Turret;
-    isGameOver: boolean;  // to avoid infinite loops
+    isGameOver: boolean; // to avoid infinite loops
     sprites: Sprite[];
     isDialogOpen: boolean;
 }
 
 class App extends React.Component<{}, AppState> {
-    
     canvasWidth: number;
     canvasHeight: number;
     numCircles: number;
@@ -58,12 +62,11 @@ class App extends React.Component<{}, AppState> {
              * bullets, and the turret).
              */
             sprites: [],
-            isDialogOpen: false
+            isDialogOpen: false,
         };
     }
 
     render(): JSX.Element {
-
         // Combine all sprites into one list to be drawn on the canvas
         let sprites: Sprite[] = (this.state.circles as Sprite[])
             .concat(this.state.bullets)
@@ -71,16 +74,26 @@ class App extends React.Component<{}, AppState> {
             .concat(this.state.sprites);
 
         return (
-            <div style={{position: "relative"}}>
-                <div style={{filter: this.state.isDialogOpen ? "blur(0.20rem)" : "none"}}>
+            <div style={{ position: "relative" }}>
+                <div
+                    style={{
+                        filter: this.state.isDialogOpen
+                            ? "blur(0.20rem)"
+                            : "none",
+                    }}
+                >
                     <Menu
                         score={this.state.score}
                         numCircles={this.state.circles.length}
                         resetGame={this.resetGameMouseEvent.bind(this)}
-                        openDialog={() => { this.setState({isDialogOpen: true}) }}
+                        openDialog={() => {
+                            this.setState({ isDialogOpen: true });
+                        }}
                     />
 
-                    <div className="gameWrapper" /* Position div right of center div: http://jsfiddle.net/1Lrph45y/4/ */ >
+                    <div
+                        className="gameWrapper" /* Position div right of center div: http://jsfiddle.net/1Lrph45y/4/ */
+                    >
                         <div className="center">
                             <Canvas
                                 width={this.canvasWidth}
@@ -89,11 +102,13 @@ class App extends React.Component<{}, AppState> {
                                 onClick={this.fireBullet.bind(this)}
                                 onMouseMove={this.turretFollowMouse.bind(this)}
                             />
-                            <TurretModeComponent mode={this.state.turret.turretMode} />
+                            <TurretModeComponent
+                                mode={this.state.turret.turretMode}
+                            />
                         </div>
                         <div className="scoreBoardFloating">
                             <div className="scoreBoard">
-                                <HighScores 
+                                <HighScores
                                     numTopScores={3}
                                     currentScore={this.state.score}
                                     isEndGame={this.isEndGame.bind(this)}
@@ -105,8 +120,23 @@ class App extends React.Component<{}, AppState> {
 
                 <Dialog
                     isOpen={this.state.isDialogOpen}
+                    positiveActionText="Yes, delete my data"
                     positiveAction={this.clearData.bind(this)}
-                    negativeAction={() => { this.setState({isDialogOpen: false}) }}/>
+                    negativeActionText="No, keep my data"
+                    negativeAction={() => {
+                        this.setState({ isDialogOpen: false });
+                    }}
+                >
+                    Are you sure you want to delete all your data? This will
+                    include:
+                    <br />
+                    <ul>
+                        <li>High Scores</li>
+                        <li>Turret Mode</li>
+                    </ul>
+                    Once deleted, this data is gone forever and cannot be
+                    recovered.
+                </Dialog>
 
                 {/*<Footer/>*/}
             </div>
@@ -125,24 +155,26 @@ class App extends React.Component<{}, AppState> {
 
     componentDidUpdate() {
         if (this.isEndGame()) {
-
             // Display end-game text in canvas
             let gameOverText: Text = new Text(
                 "Game Over",
                 this.canvasWidth / 2,
-                (this.canvasHeight / 2) - 10
+                this.canvasHeight / 2 - 10
             );
 
             let scoreText: Text = new Text(
                 `Score: ${this.state.score}`,
                 this.canvasWidth / 2,
-                (this.canvasHeight / 2) + 33,
+                this.canvasHeight / 2 + 33,
                 undefined,
                 35
             );
 
             // Setting "isGameOVer" flag avoids infinite recursion with setting state and re-renders
-            this.setState({isGameOver: true, sprites: [gameOverText, scoreText]});
+            this.setState({
+                isGameOver: true,
+                sprites: [gameOverText, scoreText],
+            });
         }
     }
 
@@ -156,31 +188,37 @@ class App extends React.Component<{}, AppState> {
                 this.resetGame();
                 break;
             case TurretMode.DEFAULT.key:
-                turret.setTurretMode(TurretMode.DEFAULT.key)
+                turret.setTurretMode(TurretMode.DEFAULT.key);
                 break;
             case TurretMode.BOUNCE.key:
-                turret.setTurretMode(TurretMode.BOUNCE.key)
+                turret.setTurretMode(TurretMode.BOUNCE.key);
                 break;
             case TurretMode.ARRAY.key:
-                turret.setTurretMode(TurretMode.ARRAY.key)
+                turret.setTurretMode(TurretMode.ARRAY.key);
                 break;
             case TurretMode.BURST.key:
-                turret.setTurretMode(TurretMode.BURST.key)
+                turret.setTurretMode(TurretMode.BURST.key);
                 break;
         }
-        this.setState({turret: turret});
+        this.setState({ turret: turret });
     }
 
     // Make the turret follow the player's mouse
-    turretFollowMouse(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void {
-
+    turretFollowMouse(
+        e: React.MouseEvent<HTMLCanvasElement, MouseEvent>
+    ): void {
         if (!this.state.isDialogOpen) {
-            let rect: DOMRect = (e.target as HTMLCanvasElement).getBoundingClientRect();
-            let mouseVector: Vector = new Vector(e.clientX - rect.left, e.clientY - rect.top);
-    
+            let rect: DOMRect = (
+                e.target as HTMLCanvasElement
+            ).getBoundingClientRect();
+            let mouseVector: Vector = new Vector(
+                e.clientX - rect.left,
+                e.clientY - rect.top
+            );
+
             let turret: Turret = this.state.turret;
             turret.update(mouseVector);
-            this.setState({turret: turret});
+            this.setState({ turret: turret });
         }
     }
 
@@ -189,16 +227,17 @@ class App extends React.Component<{}, AppState> {
         if (!this.state.isDialogOpen) {
             let turret: Turret = this.state.turret;
             let bullets: Bullet[] = turret.getBullets(this);
-            this.setState({bullets: this.state.bullets.concat(bullets)});
+            this.setState({ bullets: this.state.bullets.concat(bullets) });
         }
     }
 
-    resetGameMouseEvent(_: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+    resetGameMouseEvent(
+        _: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    ): void {
         this.resetGame();
     }
 
     clearData(): void {
-
         // Set the turret mode back to default because the turret mode is stored in localStorage.
         let turret: Turret = this.state.turret;
         turret.setTurretMode(TurretMode.DEFAULT.key);
@@ -207,39 +246,40 @@ class App extends React.Component<{}, AppState> {
         clearValues();
 
         // Update turret and close dialog
-        this.setState({isDialogOpen: false, turret: turret});
+        this.setState({ isDialogOpen: false, turret: turret });
     }
 
-    resetGame(): void {        
+    resetGame(): void {
         this.setState({
             score: 0,
             circles: this.createCircles(),
             bullets: [],
             isGameOver: false,
-            sprites: []
+            sprites: [],
         });
     }
 
     mainLoop() {
-
         if (!this.state.isDialogOpen) {
-            let circles: Circle[] = this.state.circles.concat(this.state.bullets);
+            let circles: Circle[] = this.state.circles.concat(
+                this.state.bullets
+            );
             for (let i = 0; i < circles.length; i++) {
                 const current: Circle = circles[i];
-    
+
                 /*
                 Check collisions with the circles after the current circle in the array. Collisions with circles before the
                 current circle in the array do not need to be checked due to the commutative property (e.g., if A collides
                 with B, then B has, in a sense, collided with A).
                 */
                 const rest: Circle[] = circles.slice(i + 1);
-    
+
                 for (let circle of rest) {
                     if (circle.collidedWith(current)) {
                         circle.collisionUpdate(current);
-                    } 
+                    }
                 }
-    
+
                 current.checkEdges(); // Handle how circles respond at the edges of the canvas
                 current.update();
             }
@@ -254,14 +294,16 @@ class App extends React.Component<{}, AppState> {
             let color: Color = getRandomColor();
 
             // 15 percent change the circle is a splitter circle
-            let circle: Circle = percentChance(0.15) ? new SplitterCircle(this) : new TargetCircle(this, color);
+            let circle: Circle = percentChance(0.15)
+                ? new SplitterCircle(this)
+                : new TargetCircle(this, color);
             circles.push(circle);
         }
         return circles;
     }
 
     addCircles(newCircles: Circle[]): void {
-        this.setState({circles: this.state.circles.concat(newCircles)});
+        this.setState({ circles: this.state.circles.concat(newCircles) });
     }
 
     removeCircle(circle: Circle): void {
@@ -270,7 +312,7 @@ class App extends React.Component<{}, AppState> {
         let index: number = circles.indexOf(circle);
         circles.splice(index, 1);
 
-        this.setState({circles: circles});
+        this.setState({ circles: circles });
     }
 
     removeBullet(bullet: Bullet): void {
@@ -279,15 +321,15 @@ class App extends React.Component<{}, AppState> {
         let index: number = bullets.indexOf(bullet);
         bullets.splice(index, 1);
 
-        this.setState({bullets: bullets});
+        this.setState({ bullets: bullets });
     }
 
     addBullets(newBullets: Bullet[]): void {
-        this.setState({bullets: this.state.bullets.concat(newBullets)});
+        this.setState({ bullets: this.state.bullets.concat(newBullets) });
     }
 
     updateScore(bullet: Bullet): void {
-        this.setState({score: this.state.score + bullet.scoreMultiplier});
+        this.setState({ score: this.state.score + bullet.scoreMultiplier });
     }
 }
 

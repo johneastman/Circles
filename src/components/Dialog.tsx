@@ -1,48 +1,63 @@
-import React from "react";
+import React, { ReactNode, useEffect } from "react";
 import "./Dialog.css";
 
 interface DialogProps {
+    children: ReactNode;
     isOpen: boolean;
+
+    positiveActionText: string;
     positiveAction: () => void;
+
+    negativeActionText: string;
     negativeAction: () => void;
 }
 
-export class Dialog extends React.Component<DialogProps, {}> {
+function Dialog(props: DialogProps) {
+    const dialogElement: React.RefObject<HTMLDialogElement> =
+        React.createRef<HTMLDialogElement>();
 
-    dialogElement: React.RefObject<HTMLDialogElement>;
-    constructor(props: DialogProps) {
-        super(props);
-
-        this.dialogElement = React.createRef<HTMLDialogElement>();
-    }
-
-    componentDidUpdate(): void {
-        if (this.props.isOpen) {
-            // Need to call "showModal" to make background inert (i.e, disable interaction with elements below dialog).
-            this.dialogElement.current!.showModal();
+    useEffect(() => {
+        if (!dialogElement.current) {
+            // componentDidMount
         } else {
-            this.dialogElement.current!.close();
+            // componentDidUpdate
+            if (props.isOpen) {
+                // Need to call "showModal" to make background inert (i.e, disable interaction with elements below dialog).
+                dialogElement.current.showModal();
+            } else {
+                dialogElement.current.close();
+            }
         }
-    }
+    });
 
-    render(): JSX.Element {
-        return <dialog ref={this.dialogElement} className="dialog">
+    return (
+        <dialog ref={dialogElement} className="dialog">
             <div>
-                Are you sure you want to delete all your data? This will include:
-                <br/>
-                <ul>
-                    <li>High Scores</li>
-                    <li>Turret Mode</li>
-                </ul>
-                Once deleted, this data is gone forever and cannot be recovered.
+                {props.children}
 
-                <div className="horizontalList" style={{paddingTop: "1rem"}}>
+                <div className="horizontalList" style={{ paddingTop: "1rem" }}>
                     <ul>
-                        <li style={{paddingRight: "0.5rem"}}><button className="button" onClick={this.props.positiveAction}>Yes, delete my data</button></li>
-                        <li style={{paddingLeft:  "0.5rem"}}><button className="button" onClick={this.props.negativeAction}>No, keep my data</button></li>
+                        <li style={{ paddingRight: "0.5rem" }}>
+                            <button
+                                className="button"
+                                onClick={props.positiveAction}
+                            >
+                                {props.positiveActionText}
+                            </button>
+                        </li>
+                        <li style={{ paddingLeft: "0.5rem" }}>
+                            <button
+                                className="button"
+                                onClick={props.negativeAction}
+                            >
+                                {props.negativeActionText}
+                            </button>
+                        </li>
                     </ul>
                 </div>
             </div>
         </dialog>
-    }
+    );
 }
+
+export default Dialog;

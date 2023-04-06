@@ -1,5 +1,5 @@
 import React from "react";
-import './Canvas.css';
+import "./Canvas.css";
 import { Sprite } from "../sprites/sprite";
 
 interface CanvasProps {
@@ -11,7 +11,6 @@ interface CanvasProps {
 }
 
 class Canvas extends React.Component<CanvasProps, {}> {
-
     htmlRef: React.RefObject<HTMLCanvasElement>;
 
     constructor(props: CanvasProps) {
@@ -35,7 +34,9 @@ class Canvas extends React.Component<CanvasProps, {}> {
 
     componentDidMount(): void {
         // constantly rerender the canvas so circles are always moving on the screen
-        setInterval(() => { this.forceUpdate() }, 1);
+        setInterval(() => {
+            this.forceUpdate();
+        }, 1);
     }
 
     componentDidUpdate(): void {
