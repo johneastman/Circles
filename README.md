@@ -55,3 +55,6 @@ All source files are in the `src` directory.
 * `src/game`: miscellaneous TypeScript logic code
 
 Tests are located in the `test` directory.
+
+## Development Notes
+Notes about the development process, solutions to encountered errors, etc. can be found in [the wiki](https://github.com/johneastman/circles/wiki#development-notes).
